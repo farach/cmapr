@@ -1,0 +1,18 @@
+Package: cmapr
+Title: Career Mobility Analysis R Package
+Version: 0.0.0.9000
+Authors@R: person("Alex Farach", email = "alexfarach@microsoft.com", role = c("aut", "cre"))
+Description: R package for analyzing career mobility.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    cli,
+    dplyr,
+    janitor,
+    magrittr,
+    purrr,
+    readr,
+    stringr,
+    tibble
+RoxygenNote: 7.3.2
