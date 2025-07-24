@@ -10,7 +10,7 @@ Install the latest version from GitHub:
 # Install remotes if needed
 install.packages("remotes")
 # Install cmapr
-remotes::install_github("yourusername/cmapr")
+remotes::install_github("farach/cmapr")
 ```
 
 ## Data Access
