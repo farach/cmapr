@@ -54,51 +54,56 @@
 <img src="logo.png" class="logo" alt=""><h1 id="cmapr">cmapr<a class="anchor" aria-label="anchor" href="#cmapr"></a>
 </h1>
 </div>
-<p><strong>cmapr</strong> is a R package for reproducible analysis of the <a href="https://zenodo.org/records/15260189" class="external-link">CMap Career Mobility Dataset</a>.</p>
-<p>It provides a tidy interface for accessing, manipulating, and exploring large-scale career transition data—including job title mappings, specialization metrics, and validated/unvalidated promotion networks—enabling advanced labor market analysis, workforce research, and mobility modeling.</p>
+<p><strong>cmapr</strong> is an R package for reproducible analysis of the <a href="https://zenodo.org/records/15260189" class="external-link">CMap Career Mobility Dataset</a>, a global database of standardized job titles, specialization scores, and career transitions across 24 sectors.</p>
+<p>The package provides a tidy interface for accessing, manipulating, and exploring career mobility data—including job title mappings, specialization metrics, and validated or model-inferred promotion networks—enabling large-scale labor market analysis, workforce research, and mobility modeling.</p>
 <hr>
 <div class="section level2">
-<h2 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+<h2 id="mag-key-features">🔍 Key Features<a class="anchor" aria-label="anchor" href="#mag-key-features"></a>
 </h2>
 <ul>
-<li><p><strong>Seamless Data Access:</strong><br>
-Download and prepare the official CMap dataset from Zenodo with a single function call.</p></li>
-<li><p><strong>Title Mapping &amp; Specialization:</strong><br>
-Explore sector-specific job title frequencies, specialization scores (SI), ONET codes, and title standardization steps (cleaned, generalized, simplified).</p></li>
-<li><p><strong>Career Mobility Networks:</strong><br>
-Analyze validated and statistically inferred job promotions as directed graphs, including edge and node properties and interactive HTML visualizations.</p></li>
-<li><p><strong>Tidyverse-First API:</strong><br>
-All functions return tibbles or lists of tibbles, designed for use with <code>dplyr</code>, <code>tidyr</code>, <code>ggplot2</code>, and the broader tidyverse.</p></li>
+<li><p><strong>Standardized Title Taxonomy</strong><br>
+Access a multi-level title hierarchy based on over 5.2 million job titles from 220+ million public CVs. Titles are cleaned, generalized, and simplified across 24 industry sectors using NLP and LLM-assisted methods.</p></li>
+<li><p><strong>Specialization Index (SI)</strong><br>
+Evaluate how concentrated a job title is within a sector using a normalized specialization score (0 to 1). High SI values denote strong occupational identity or niche expertise.</p></li>
+<li><p><strong>Promotion Networks</strong><br>
+Explore two types of directed career transition graphs:<br>
+▸ <strong>Validated:</strong> ~32,000 human-annotated promotions (U.S. and U.K.)<br>
+▸ <strong>Unvalidated:</strong> ~61,000 model-inferred transitions from ~10 million CVs (global)<br>
+Graphs include edge weights, validation status, and optional interactive HTML views.</p></li>
+<li><p><strong>Tidyverse-First API</strong><br>
+All functions return <code>tibble</code> objects or lists of tibbles, designed to work fluidly with <code>dplyr</code>, <code>tidyr</code>, <code>ggplot2</code>, and the broader tidyverse ecosystem.</p></li>
+<li><p><strong>Built-In Downloaders &amp; Utilities</strong><br>
+Automatically download and unzip the latest official release from Zenodo, with functions to load structured files, parse career transitions, and join metadata.</p></li>
 </ul>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="package-installation">📦 Installation<a class="anchor" aria-label="anchor" href="#package-installation"></a>
 </h2>
-<p>Install the latest version from GitHub:</p>
+<p>Install the latest development version from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span> <span class="co"># if needed</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>  <span class="co"># if needed</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"farach/cmapr"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="data-access">Data Access<a class="anchor" aria-label="anchor" href="#data-access"></a>
+<h2 id="card_index_dividers-data-access">🗂️ Data Access<a class="anchor" aria-label="anchor" href="#card_index_dividers-data-access"></a>
 </h2>
-<p>The full CMap dataset is <strong>not shipped</strong> with this package due to size and licensing.<br>
-To download and prepare the data (requires ~130MB disk space):</p>
+<p>The full CMap dataset is <strong>not shipped</strong> with this package due to size and licensing. To download and prepare the data (requires ~130MB disk space):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">cmapr</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Download and unzip dataset from Zenodo (to a permanent location recommended)</span></span>
 <span><span class="va">dataset_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/download_cmap_data.html">download_cmap_data</a></span><span class="op">(</span><span class="st">"~/cmap_data"</span><span class="op">)</span></span></code></pre></div>
+<p>Notes:</p>
 <ul>
-<li>By default, downloads to a temporary directory.<br>
-</li>
+<li>By default, downloads to a temporary directory.</li>
 <li>If data already exists, the function will let you know and skip re-download unless you set <code>overwrite = TRUE</code>.</li>
 </ul>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="typical-workflow--usage-examples">Typical Workflow &amp; Usage Examples<a class="anchor" aria-label="anchor" href="#typical-workflow--usage-examples"></a>
+<h2 id="test_tube-typical-workflow--usage-examples">🧪 Typical Workflow &amp; Usage Examples<a class="anchor" aria-label="anchor" href="#test_tube-typical-workflow--usage-examples"></a>
 </h2>
 <div class="section level3">
 <h3 id="id_1-load-core-data">1. Load Core Data<a class="anchor" aria-label="anchor" href="#id_1-load-core-data"></a>
@@ -113,6 +118,7 @@ To download and prepare the data (requires ~130MB disk space):</p>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">si_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_sector_specialization.html">load_sector_specialization</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"titles/si"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">si_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">si</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -123,6 +129,7 @@ To download and prepare the data (requires ~130MB disk space):</p>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">title_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_title_map.html">load_title_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"titles/map"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">title_map</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">count</span><span class="op">(</span><span class="va">sector</span>, <span class="va">title_simplified</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -134,7 +141,9 @@ To download and prepare the data (requires ~130MB disk space):</p>
 </h4>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">validated_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_validated_promotions.html">load_validated_promotions</a></span><span class="op">(</span><span class="st">"edges"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/validated"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">validated_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_validated_promotions.html">load_validated_promotions</a></span><span class="op">(</span><span class="st">"nodes"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/validated"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Open interactive HTML network for a sector/country</span></span>
 <span><span class="fu"><a href="reference/load_validated_promotions.html">load_validated_promotions</a></span><span class="op">(</span><span class="st">"network"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/validated"</span><span class="op">)</span>, open_html <span class="op">=</span> <span class="st">"US_finance.html"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -143,7 +152,9 @@ To download and prepare the data (requires ~130MB disk space):</p>
 </h4>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">unvalidated_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_unvalidated_promotions.html">load_unvalidated_promotions</a></span><span class="op">(</span><span class="st">"edges"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/unvalidated"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">unvalidated_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_unvalidated_promotions.html">load_unvalidated_promotions</a></span><span class="op">(</span><span class="st">"nodes"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/unvalidated"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Open interactive HTML network for a sector/region</span></span>
 <span><span class="fu"><a href="reference/load_unvalidated_promotions.html">load_unvalidated_promotions</a></span><span class="op">(</span><span class="st">"network"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/unvalidated"</span><span class="op">)</span>, open_html <span class="op">=</span> <span class="st">"EUROPE_finance.html"</span><span class="op">)</span></span></code></pre></div>
 <hr>
@@ -151,9 +162,27 @@ To download and prepare the data (requires ~130MB disk space):</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+<h2 id="blue_bookabout-the-dataset">📘About the Dataset<a class="anchor" aria-label="anchor" href="#blue_bookabout-the-dataset"></a>
 </h2>
-<p>Subhani et al. (2025), <a href="https://www.nature.com/articles/s41597-025-05526-3" class="external-link">“A global career mobility map from 170 million job transitions”</a>, <em>Scientific Data</em>, Nature.</p>
+<p>The CMap dataset was constructed by aggregating over <strong>546 million job experiences</strong> from <strong>220+ million publicly available CVs</strong>, covering <strong>197 countries</strong> and <strong>24 sectors</strong> (e.g., health, finance, manufacturing). Job titles were cleaned and standardized into ~123,000 unique entries using large language models and multi-stage NLP pipelines.</p>
+<ul>
+<li><p><strong>Specialization Index (SI):</strong><br>
+A numerical indicator (0–1) quantifying how sector-specific a job title is. Higher values indicate narrower occupational focus.</p></li>
+<li><p><strong>Career Mobility Data:</strong></p></li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="sc">-</span>   \<span class="sc">~</span><span class="dv">32</span>k human<span class="sc">-</span>labeled <span class="fu">promotions</span> (U.S. and U.K.)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="sc">-</span>   \<span class="sc">~</span><span class="dv">61</span>k statistically inferred transitions using a model trained on validated pairs</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="sc">-</span>   Model performance<span class="sc">:</span> <span class="er">**</span><span class="fl">97.5</span><span class="sc">% balanced accuracy**, **98.9%</span> precision<span class="sc">**</span>, <span class="sc">**</span><span class="fl">99.2</span>% recall<span class="sc">**</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="open_bookcitation">📖Citation<a class="anchor" aria-label="anchor" href="#open_bookcitation"></a>
+</h2>
+<blockquote>
+<p>Subhani, S., Memon, S.A. &amp; AlShebli, B. <a href="https://www.nature.com/articles/s41597-025-05526-3" class="external-link">CMap: a database for mapping job titles, sector specialization, and promotions across 24 sectors</a>. Sci Data 12, 1214 (2025). <a href="https://doi.org/10.1038/s41597-025-05526-3" class="external-link uri">https://doi.org/10.1038/s41597-025-05526-3</a></p>
+</blockquote>
 <hr>
 </div>
 <div class="section level2">

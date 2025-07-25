@@ -1,6 +1,6 @@
 #' Download the CMap Career Mobility Dataset from Zenodo
 #'
-#' Downloads and unzips the official CMap dataset as described in Subhani et al. (2025).
+#' Downloads and unzips the official CMap dataset as described in Subhani, S., Memon, S.A. & AlShebli, B. CMap: a database for mapping job titles, sector specialization, and promotions #' across 24 sectors. Sci Data 12, 1214 (2025). https://doi.org/10.1038/s41597-025-05526-3.
 #' The dataset is large and not shipped with the package; this function makes reproducible access easy.
 #'
 #' @param dest_dir Directory to save and unzip the dataset. Defaults to tempdir().
