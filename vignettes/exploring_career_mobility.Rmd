@@ -1,0 +1,153 @@
+---
+title: "Analyzing Career Mobility in the CMap Dataset: Practical Examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyzing Career Mobility in the CMap Dataset: Practical Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cmapr)
+library(tidyverse)
+
+# Set dataset_dir to where you downloaded the CMap data
+# Change this path to match your local system!
+dataset_dir <- "~/cmap_data/dataset"
+```
+
+# **Analyzing Career Mobility in the CMap Dataset: Practical Examples**
+
+This vignette provides hands-on examples for analyzing job specialization, title mapping, and promotion networks using the **cmapr** package and the [CMap Career Mobility Dataset](https://www.nature.com/articles/s41597-025-05526-3).
+
+The examples are designed to help you efficiently explore and visualize the data, leveraging tidyverse tools for clarity and reproducibility.
+
+------------------------------------------------------------------------
+
+## **1. Loading and Inspecting Specialization Data**
+
+The specialization index (SI) quantifies how distinctive a job title is within its sector.
+
+```{r}
+si_data <- load_sector_specialization(file.path(dataset_dir, "titles/si"))
+si_data %>%
+  group_by(sector) %>%
+  arrange(desc(si)) %>%
+  slice_head(n = 10) %>%
+  select(sector, title, si)
+```
+
+**Tip:**\
+To find the most specialized roles in a sector, filter by high SI scores.
+
+```{r}
+si_data %>%
+  filter(sector == "Information Technology") %>%
+  arrange(desc(si)) %>%
+  slice_head(n = 5)
+```
+
+------------------------------------------------------------------------
+
+## **2. Mapping and Summarizing Job Titles**
+
+The title mapping data helps you understand how raw job titles are standardized and grouped.
+
+```{r}
+title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
+title_map %>%
+  count(sector, title_simplified, sort = TRUE)
+```
+
+**Tip:**\
+Use this mapping to collapse variant job titles and compute sector-level frequencies.
+
+```{r}
+title_map %>%
+  group_by(sector, title_simplified) %>%
+  summarise(total = sum(frequency_simplified, na.rm = TRUE)) %>%
+  arrange(sector, desc(total))
+```
+
+------------------------------------------------------------------------
+
+## **3. Exploring Promotion Networks**
+
+Promotion networks show observed transitions between job titles, both validated (manually reviewed) and unvalidated (algorithmic).
+
+### **Validated Promotions**
+
+```{r}
+validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"))
+validated_nodes <- load_validated_promotions("nodes", file.path(dataset_dir, "promotions/validated"))
+```
+
+### **Unvalidated Promotions**
+
+```{r}
+unvalidated_edges <- load_unvalidated_promotions("edges", file.path(dataset_dir, "promotions/unvalidated"))
+unvalidated_nodes <- load_unvalidated_promotions("nodes", file.path(dataset_dir, "promotions/unvalidated"))
+```
+
+**Tip:**\
+Investigate the most frequent promotion paths in a sector:
+
+```{r}
+unvalidated_edges %>%
+  filter(sector == "Healthcare") %>%
+  arrange(desc(frequency)) %>%
+  slice_head(n = 5) %>%
+  select(from, to, frequency, promotion_prob)
+```
+
+------------------------------------------------------------------------
+
+## **4. Visualizing Career Transitions**
+
+You can visualize promotion networks interactively (if HTML files are available):
+
+```{r, eval = FALSE}
+load_validated_promotions("network", file.path(dataset_dir, "promotions/validated"), open_html = "US_finance.html")
+```
+
+Or plot a simple summary using ggplot2:
+
+```{r}
+top_edges <- unvalidated_edges %>%
+  group_by(sector) %>%
+  arrange(desc(frequency)) %>%
+  slice_head(n = 5)
+
+ggplot(top_edges, aes(x = reorder(from, frequency), y = frequency, fill = to)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~sector, scales = "free") +
+  labs(title = "Most Frequent Career Transitions by Sector",
+       x = "From Title",
+       y = "Frequency") +
+  theme_minimal(base_size = 12)
+```
+
+------------------------------------------------------------------------
+
+## **5. Further Exploration and Research**
+
+-   Combine `cmapr` data tables with external labor market data for advanced modeling.
+
+-   Use the specialization index to identify emerging or declining roles.
+
+-   Explore cross-sector mobility patterns to inform workforce development.
+
+**References:**
+
+-   [CMap Career Mobility Dataset - Nature Scientific Data (2025)](https://www.nature.com/articles/s41597-025-05526-3)
+
+-   [cmapr package documentation](https://github.com/farach/cmapr)
+
+------------------------------------------------------------------------
+
+These examples provide a foundation for your own research and exploration of global career mobility.\
+For more advanced analyses, see additional articles or the package reference.

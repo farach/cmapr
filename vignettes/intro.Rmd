@@ -1,0 +1,90 @@
+---
+title: "Get Started with cmapr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get Started with cmapr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cmapr)
+library(dplyr)
+```
+
+# **Introduction**
+
+**cmapr** is a modern R package for tidy, reproducible analysis of the [CMap Career Mobility Dataset](https://zenodo.org/records/15260189)—the largest open research dataset of global career transitions, created for the study ["A global career mobility map from 170 million job transitions"](https://www.nature.com/articles/s41597-025-05526-3) published in *Scientific Data* (Nature).
+
+The CMap dataset provides anonymized, aggregated records of **170 million real-world job transitions** across countries, sectors, and job titles. It includes standardized mappings of job titles, sector and regional labels, specialization indices, and directed promotion networks, enabling powerful labor market research and modeling.
+
+**cmapr** makes it easy to access, manipulate, and analyze this data using the tidyverse ecosystem.
+
+------------------------------------------------------------------------
+
+## **Installation**
+
+Install from GitHub using `remotes`:
+
+```{r, eval=FALSE}
+install.packages("remotes")
+remotes::install_github("farach/cmapr")
+```
+
+------------------------------------------------------------------------
+
+## **Downloading the Data**
+
+The full CMap dataset (\~130MB) is **not bundled** with cmapr due to size and licensing. Instead, you can download the official release directly from Zenodo.
+
+**Tip:**\
+Choose a permanent folder for the data so you only need to download it once. For example, use `"~/cmap_data"` (your home directory), or a project-specific path.
+
+```{r}
+library(cmapr)
+dataset_dir <- download_cmap_data("~/cmap_data")
+```
+
+-   The function will download and unzip the data.
+
+-   If the data already exists, it will skip re-downloading by default.
+
+-   To **force overwrite/download**, set `overwrite = TRUE` :
+
+    ```{r}
+    dataset_dir <- download_cmap_data("~/cmap_data", overwrite = TRUE)
+    ```
+
+-   Once downloaded, you can re-use this folder for all your analyses.
+
+**Efficient Data Management:**
+
+-   Store data in a location that’s backed up and easily accessible for all your R projects.
+
+-   On shared or cloud systems, consider a workspace directory or mounted drive.
+
+-   If you use RStudio projects, you may want to keep `"cmap_data"` outside your main package folder to avoid accidental deletion.
+
+------------------------------------------------------------------------
+
+## **Loading and Exploring the Data**
+
+After downloading, load the data into tidy tibbles for analysis:
+
+```{r}
+result <- load_cmap_data(base_path = dataset_dir)
+model_data <- result$model_data      # Main transitions and features
+metadata   <- result$metadata        # Job title and sector metadata
+```
+
+You now have instant access to the core CMap tables, ready for use with dplyr, tidyr, and ggplot2.
+
+------------------------------------------------------------------------
+
+## **Next Steps**
+
+See the next article for practical examples of data exploration with cmapr!

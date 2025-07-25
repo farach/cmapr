@@ -1,11 +1,18 @@
 Package: cmapr
-Title: Career Mobility Analysis R Package
+Title: Tools for Career Mobility Analysis with the CMap Dataset
 Version: 0.0.0.9000
-Authors@R: person("Alex Farach", email = "alexfarach@microsoft.com", role = c("aut", "cre"))
-Description: R package for analyzing career mobility.
+Authors@R: 
+    person("Alex", "Farach", email = "alexfarach@microsoft.com", role = c("aut", "cre"))
+Description: 
+    Provides tidy tools for analyzing the CMap Career Mobility Dataset, the largest open dataset of global job transitions.
+    Includes functions to download, load, and explore career transition networks, job title mappings, sector specialization, and promotion pathways.
+    Designed for efficient and reproducible research using the tidyverse ecosystem.
+    See <https://farach.github.io/cmapr> for documentation and usage examples.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends: 
+    R (>= 3.5)
 Imports:
     cli,
     dplyr,
@@ -15,6 +22,13 @@ Imports:
     readr,
     stringr,
     tibble
+Suggests:
+    ggplot2,
+    tidyr,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+URL: https://farach.github.io/cmapr, https://github.com/farach/cmapr
+BugReports: https://github.com/farach/cmapr/issues
+VignetteBuilder: rmarkdown
 RoxygenNote: 7.3.2
-Depends: 
-    R (>= 3.5)
