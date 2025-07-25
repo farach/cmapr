@@ -4,24 +4,28 @@
 \alias{download_cmap_data}
 \title{Download the CMap Career Mobility Dataset from Zenodo}
 \usage{
-download_cmap_data(dest_dir = tempdir())
+download_cmap_data(dest_dir = tempdir(), overwrite = FALSE)
 }
 \arguments{
 \item{dest_dir}{Directory to save and unzip the dataset. Defaults to tempdir().}
+
+\item{overwrite}{Logical; if TRUE, always re-download even if data exists. Defaults to FALSE.}
 }
 \value{
 Path to the unzipped dataset directory (usually dest_dir/dataset).
 }
 \description{
-Downloads and unzips the official CMap dataset as described in Farach et al. (2025).
+Downloads and unzips the official CMap dataset as described in Subhani et al. (2025).
 The dataset is large and not shipped with the package; this function makes reproducible access easy.
 }
 \details{
 The dataset is downloaded from Zenodo at https://zenodo.org/records/15260189.
-You must run this function before using \code{load_cmap_data()}.
+If the data is already present, the function displays a message and skips download unless overwrite = TRUE.
 }
 \examples{
 \dontrun{
 dataset_dir <- download_cmap_data("~/cmap_data")
+# To force re-download:
+dataset_dir <- download_cmap_data("~/cmap_data", overwrite = TRUE)
 }
 }
