@@ -27,35 +27,39 @@
 #' @importFrom stats runif setNames
 #' @importFrom cli cli_h1 cli_text cli_h2 cli_alert_info cli_alert_warning
 #' @export
+utils::globalVariables(c(
+  "job_title_from", "job_title_to", 
+  "frequency.x", "frequency.y", 
+  "weighted_frequency.x", "weighted_frequency.y"
+))
 load_cmap_data <- function(
     base_path,
     ext_path = NULL,
     output_path = NULL,
-    verbose = TRUE
-) {
+    verbose = TRUE) {
   # NOTE: Do NOT use library() calls inside package functions!
   # All package functions are referenced with :: or imported via NAMESPACE.
-  
-  if(verbose) {
+
+  if (verbose) {
     cli::cli_h1("CMap Data Loading")
     cli::cli_text("Base path: {base_path}")
-    if(!is.null(ext_path)) cli::cli_text("Extended path: {ext_path}")
-    if(!is.null(output_path)) cli::cli_text("Output path: {output_path}")
+    if (!is.null(ext_path)) cli::cli_text("Extended path: {ext_path}")
+    if (!is.null(output_path)) cli::cli_text("Output path: {output_path}")
     cli::cli_text("User: {Sys.info()[['user']]}")
     cli::cli_text("Time: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}")
   }
-  
-  if(!is.null(output_path)) {
+
+  if (!is.null(output_path)) {
     dir.create(output_path, showWarnings = FALSE, recursive = TRUE)
   }
-  
+
   # Utility to list CSV files recursively
   find_csv_files <- function(dir_path) {
     list.files(dir_path, pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
   }
-  
+
   # Directory analysis (optional, for reporting)
-  if(verbose) {
+  if (verbose) {
     cli::cli_h2("Analyzing Directory Structure")
     dirs <- c(
       file.path(base_path, "promotions"),
@@ -72,162 +76,189 @@ load_cmap_data <- function(
       }
     })
   }
-  
+
   # Load promotion data (validated/unvalidated)
   load_promotion_df <- function(base_dir, is_validated = TRUE) {
     files <- find_csv_files(base_dir)
-    if(verbose) cli::cli_alert_info("Found {length(files)} promotion files in {base_dir}")
-    required_cols <- c("job_title_from", "job_title_to", "promotion_probability",
-                       "region", "sector", "validated", "source_file")
+    if (verbose) cli::cli_alert_info("Found {length(files)} promotion files in {base_dir}")
+    required_cols <- c(
+      "job_title_from", "job_title_to", "promotion_probability",
+      "region", "sector", "validated", "source_file"
+    )
     promotions <- purrr::map_dfr(files, function(file_path) {
-      result <- tryCatch({
-        dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
-          janitor::clean_names()
-        n <- nrow(dat)
-        # Infer region/sector from file path
-        fname <- basename(file_path)
-        region <- "Unknown"
-        sector <- "Unknown"
-        if(stringr::str_detect(fname, "^[^_]+_.*\\.csv$")) {
-          region <- stringr::str_extract(fname, "^[^_]+")
-          sector <- stringr::str_remove(stringr::str_remove(fname, "^[^_]+_"), "\\.csv$")
+      result <- tryCatch(
+        {
+          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
+            janitor::clean_names()
+          n <- nrow(dat)
+          # Infer region/sector from file path
+          fname <- basename(file_path)
+          region <- "Unknown"
+          sector <- "Unknown"
+          if (stringr::str_detect(fname, "^[^_]+_.*\\.csv$")) {
+            region <- stringr::str_extract(fname, "^[^_]+")
+            sector <- stringr::str_remove(stringr::str_remove(fname, "^[^_]+_"), "\\.csv$")
+          }
+          dat <- dplyr::mutate(dat,
+            region = region,
+            sector = sector,
+            validated = is_validated,
+            source_file = file_path
+          )
+          # Identify job_title_from
+          if (!("job_title_from" %in% names(dat))) {
+            title_cols <- names(dat)[stringr::str_detect(names(dat), "title|job|position|role|source")]
+            if (length(title_cols) > 0) {
+              dat <- dplyr::mutate(dat, job_title_from = dat[[title_cols[1]]])
+            } else {
+              dat <- dplyr::mutate(dat, job_title_from = paste("Job", seq_len(n)))
+            }
+          }
+          # Identify job_title_to
+          if (!("job_title_to" %in% names(dat))) {
+            title_cols <- setdiff(
+              names(dat)[stringr::str_detect(names(dat), "title|job|position|role|target")],
+              names(dat)[stringr::str_detect(names(dat), "from|source")]
+            )
+            if (length(title_cols) > 0) {
+              dat <- dplyr::mutate(dat, job_title_to = dat[[title_cols[1]]])
+            } else {
+              dat <- dplyr::mutate(dat, job_title_to = paste("Target Job", seq_len(n)))
+            }
+          }
+          # Promotion probability
+          if (!("promotion_probability" %in% names(dat))) {
+            prob_cols <- names(dat)[stringr::str_detect(names(dat), "prob|likelihood|chance|score")]
+            if (length(prob_cols) > 0) {
+              dat <- dplyr::mutate(dat, promotion_probability = as.numeric(dat[[prob_cols[1]]]))
+            } else {
+              dat <- dplyr::mutate(dat, promotion_probability = stats::runif(n))
+            }
+          }
+          # Ensure required columns exist
+          for (col in required_cols) {
+            if (!col %in% names(dat)) dat[[col]] <- NA
+          }
+          dplyr::select(dat, dplyr::all_of(required_cols), dplyr::everything())
+        },
+        error = function(e) {
+          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          NULL
         }
-        dat <- dplyr::mutate(dat,
-                             region = region,
-                             sector = sector,
-                             validated = is_validated,
-                             source_file = file_path
-        )
-        # Identify job_title_from
-        if(!("job_title_from" %in% names(dat))) {
-          title_cols <- names(dat)[stringr::str_detect(names(dat), "title|job|position|role|source")]
-          if(length(title_cols) > 0)
-            dat <- dplyr::mutate(dat, job_title_from = dat[[title_cols[1]]])
-          else
-            dat <- dplyr::mutate(dat, job_title_from = paste("Job", seq_len(n)))
-        }
-        # Identify job_title_to
-        if(!("job_title_to" %in% names(dat))) {
-          title_cols <- setdiff(names(dat)[stringr::str_detect(names(dat), "title|job|position|role|target")],
-                                names(dat)[stringr::str_detect(names(dat), "from|source")])
-          if(length(title_cols) > 0)
-            dat <- dplyr::mutate(dat, job_title_to = dat[[title_cols[1]]])
-          else
-            dat <- dplyr::mutate(dat, job_title_to = paste("Target Job", seq_len(n)))
-        }
-        # Promotion probability
-        if(!("promotion_probability" %in% names(dat))) {
-          prob_cols <- names(dat)[stringr::str_detect(names(dat), "prob|likelihood|chance|score")]
-          if(length(prob_cols) > 0)
-            dat <- dplyr::mutate(dat, promotion_probability = as.numeric(dat[[prob_cols[1]]]))
-          else
-            dat <- dplyr::mutate(dat, promotion_probability = stats::runif(n))
-        }
-        # Ensure required columns exist
-        for(col in required_cols) {
-          if(!col %in% names(dat)) dat[[col]] <- NA
-        }
-        dplyr::select(dat, dplyr::all_of(required_cols), dplyr::everything())
-      }, error = function(e) {
-        if(verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
-        NULL
-      })
+      )
       result
     })
     promotions
   }
-  
+
   validated_dir <- file.path(base_path, "promotions/validated")
   unvalidated_dir <- file.path(base_path, "promotions/unvalidated")
   validated_promotions <- load_promotion_df(validated_dir, TRUE)
   unvalidated_promotions <- load_promotion_df(unvalidated_dir, FALSE)
   all_promotions <- dplyr::bind_rows(validated_promotions, unvalidated_promotions)
-  
+
   # Load title mappings
   load_title_mappings <- function() {
     files <- find_csv_files(file.path(base_path, "titles/map"))
-    if(verbose) cli::cli_alert_info("Found {length(files)} title mapping files")
+    if (verbose) cli::cli_alert_info("Found {length(files)} title mapping files")
     purrr::map_dfr(files, function(file_path) {
-      tryCatch({
-        dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
-          janitor::clean_names()
-        sector <- tools::file_path_sans_ext(basename(file_path))
-        dplyr::mutate(dat, sector = sector)
-      }, error = function(e) {
-        if(verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
-        NULL
-      })
+      tryCatch(
+        {
+          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
+            janitor::clean_names()
+          sector <- tools::file_path_sans_ext(basename(file_path))
+          dplyr::mutate(dat, sector = sector)
+        },
+        error = function(e) {
+          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          NULL
+        }
+      )
     })
   }
   title_mappings <- load_title_mappings()
-  
+
   # Load specialization indices
   load_specialization_indices <- function() {
     files <- find_csv_files(file.path(base_path, "titles/si"))
-    if(verbose) cli::cli_alert_info("Found {length(files)} specialization index files")
+    if (verbose) cli::cli_alert_info("Found {length(files)} specialization index files")
     expected_cols <- c("job_title", "si", "se", "sd", "weighted_freq")
-    alt_cols <- c("title", "specialization_index", "sector_exclusivity",
-                  "sector_dominance", "weighted_frequency")
+    alt_cols <- c(
+      "title", "specialization_index", "sector_exclusivity",
+      "sector_dominance", "weighted_frequency"
+    )
     col_mapping <- stats::setNames(expected_cols, alt_cols)
     purrr::map_dfr(files, function(file_path) {
-      tryCatch({
-        dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
-          janitor::clean_names()
-        sector <- tools::file_path_sans_ext(basename(file_path))
-        dat <- dplyr::mutate(dat, sector = sector)
-        # Rename alternative columns
-        for(alt in names(col_mapping)) {
-          expected <- col_mapping[alt]
-          if(alt %in% names(dat) && !(expected %in% names(dat))) {
-            dat[[expected]] <- dat[[alt]]
+      tryCatch(
+        {
+          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
+            janitor::clean_names()
+          sector <- tools::file_path_sans_ext(basename(file_path))
+          dat <- dplyr::mutate(dat, sector = sector)
+          # Rename alternative columns
+          for (alt in names(col_mapping)) {
+            expected <- col_mapping[alt]
+            if (alt %in% names(dat) && !(expected %in% names(dat))) {
+              dat[[expected]] <- dat[[alt]]
+            }
           }
-        }
-        # Fill missing essential columns
-        for(col in expected_cols) {
-          if(!(col %in% names(dat))) {
-            if(col == "job_title") dat[[col]] <- paste("Unknown Job", seq_len(nrow(dat)))
-            else if(col %in% c("si", "se", "sd")) dat[[col]] <- stats::runif(nrow(dat))
-            else if(col == "weighted_freq") dat[[col]] <- 1
+          # Fill missing essential columns
+          for (col in expected_cols) {
+            if (!(col %in% names(dat))) {
+              if (col == "job_title") {
+                dat[[col]] <- paste("Unknown Job", seq_len(nrow(dat)))
+              } else if (col %in% c("si", "se", "sd")) {
+                dat[[col]] <- stats::runif(nrow(dat))
+              } else if (col == "weighted_freq") dat[[col]] <- 1
+            }
           }
+          dplyr::select(dat, dplyr::all_of(c("job_title", "si", "se", "sd", "weighted_freq", "sector")), dplyr::everything())
+        },
+        error = function(e) {
+          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          NULL
         }
-        dplyr::select(dat, dplyr::all_of(c("job_title", "si", "se", "sd", "weighted_freq", "sector")), dplyr::everything())
-      }, error = function(e) {
-        if(verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
-        NULL
-      })
+      )
     })
   }
   specialization_indices <- load_specialization_indices()
-  
+
   # Feature preparation
   prepare_features <- function(promotions, title_map, spec_data) {
-    if(nrow(promotions) == 0) return(tibble::tibble())
+    if (nrow(promotions) == 0) {
+      return(tibble::tibble())
+    }
     promotions <- tibble::as_tibble(promotions)
     # Ensure essential columns
     essential <- c("job_title_from", "job_title_to", "promotion_probability", "region", "sector", "validated")
-    for(col in essential) {
-      if(!(col %in% colnames(promotions))) promotions[[col]] <- NA
+    for (col in essential) {
+      if (!(col %in% colnames(promotions))) promotions[[col]] <- NA
     }
     # Join with specialization
-    if(nrow(spec_data) > 0) {
+    if (nrow(spec_data) > 0) {
       # Source job join
       promotions <- promotions %>%
         dplyr::left_join(spec_data, by = c("job_title_from" = "job_title", "sector" = "sector")) %>%
-        dplyr::rename_with(~paste0(.x, "_from"), c("si", "se", "sd", "weighted_freq"))
+        dplyr::rename_with(~ paste0(.x, "_from"), c("si", "se", "sd", "weighted_freq"))
       # Target job join
       promotions <- promotions %>%
         dplyr::left_join(spec_data, by = c("job_title_to" = "job_title", "sector" = "sector")) %>%
-        dplyr::rename_with(~paste0(.x, "_to"), c("si", "se", "sd", "weighted_freq"))
+        dplyr::rename_with(~ paste0(.x, "_to"), c("si", "se", "sd", "weighted_freq"))
       # Fill missing values
-      for(col in c("si_from", "se_from", "sd_from", "weighted_freq_from",
-                   "si_to", "se_to", "sd_to", "weighted_freq_to")) {
-        if(col %in% colnames(promotions))
-          promotions[[col]][is.na(promotions[[col]])] <- if(stringr::str_detect(col, "freq")) 1 else stats::runif(sum(is.na(promotions[[col]])), 0, 1)
+      for (col in c(
+        "si_from", "se_from", "sd_from", "weighted_freq_from",
+        "si_to", "se_to", "sd_to", "weighted_freq_to"
+      )) {
+        if (col %in% colnames(promotions)) {
+          promotions[[col]][is.na(promotions[[col]])] <- if (stringr::str_detect(col, "freq")) 1 else stats::runif(sum(is.na(promotions[[col]])), 0, 1)
+        }
       }
     } else {
-      for(col in c("si_from", "se_from", "sd_from", "weighted_freq_from",
-                   "si_to", "se_to", "sd_to", "weighted_freq_to")) {
-        promotions[[col]] <- if(stringr::str_detect(col, "freq")) 1 else stats::runif(nrow(promotions), 0, 1)
+      for (col in c(
+        "si_from", "se_from", "sd_from", "weighted_freq_from",
+        "si_to", "se_to", "sd_to", "weighted_freq_to"
+      )) {
+        promotions[[col]] <- if (stringr::str_detect(col, "freq")) 1 else stats::runif(nrow(promotions), 0, 1)
       }
     }
     # Derived features
@@ -243,14 +274,34 @@ load_cmap_data <- function(
         job_hopping_potential = as.integer(weighted_freq_to > weighted_freq_from * 1.5)
       ) %>%
       dplyr::mutate(dplyr::across(c(region, sector, validated), as.factor))
+
     # Remove columns with all NA
-    na_cols <- names(which(purrr::map_lgl(promotions, ~all(is.na(.x)))))
-    promotions <- promotions %>% dplyr::select(-dplyr::any_of(na_cols))
+    na_cols <- names(which(purrr::map_lgl(promotions, ~ all(is.na(.x)))))
+    promotions <- promotions %>% dplyr::select(-any_of(na_cols))
+
+    # Remove duplicate columns by name, keeping the first occurrence
+    promotions <- promotions[, !duplicated(names(promotions))]
+
+    # Remove ambiguous columns 'title.y', 'onet_soc_codes.y', and any pre-existing conflicting names before renaming
+    promotions <- promotions %>%
+      dplyr::select(-any_of(c("title.y", "onet_soc_codes.y", "title", "onet_soc_codes")))
+
+    # Explicit final renaming
+    promotions <- promotions %>%
+      dplyr::rename(
+        job_title_from = job_title_from,
+        job_title_to = job_title_to,
+        transition_count = frequency.x,
+        job_count_in_sector = frequency.y,
+        transition_weighted_count = weighted_frequency.x,
+        job_weighted_count_in_sector = weighted_frequency.y
+      )
+
     promotions
   }
-  
+
   model_data <- prepare_features(all_promotions, title_mappings, specialization_indices)
-  
+
   # Metadata
   metadata <- list(
     timestamp = Sys.time(),
@@ -264,18 +315,18 @@ load_cmap_data <- function(
     model_data_columns = ncol(model_data),
     column_names = colnames(model_data)
   )
-  
+
   # Save outputs (optional)
-  if(!is.null(output_path)) {
+  if (!is.null(output_path)) {
     timestamp_str <- format(Sys.time(), "%Y%m%d_%H%M%S")
     saveRDS(model_data, file.path(output_path, paste0("model_data_", timestamp_str, ".rds")))
     saveRDS(metadata, file.path(output_path, paste0("data_prep_metadata_", timestamp_str, ".rds")))
-    if(nrow(model_data) > 0) {
+    if (nrow(model_data) > 0) {
       sample_n <- min(10000, nrow(model_data))
       sample_data <- model_data[sample(seq_len(nrow(model_data)), sample_n), ]
       saveRDS(sample_data, file.path(output_path, paste0("model_data_sample_", timestamp_str, ".rds")))
     }
   }
-  
+
   invisible(list(model_data = model_data, metadata = metadata))
 }
