@@ -116,7 +116,7 @@ load_validated_promotions("network", file.path(dataset_dir, "promotions/validate
 
 Or plot a simple summary using ggplot2:
 
-```{r}
+```{r career-transitions-plot, fig.width=12, fig.height=8}
 top_edges <- unvalidated_edges %>%
   group_by(sector) %>%
   arrange(desc(frequency)) %>%

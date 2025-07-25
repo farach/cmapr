@@ -1,6 +1,7 @@
 # cmapr
 
-**cmapr** is a R package for reproducible analysis of the [CMap Career Mobility Dataset](https://zenodo.org/records/15260189).  
+**cmapr** is a R package for reproducible analysis of the [CMap Career Mobility Dataset](https://zenodo.org/records/15260189).
+
 It provides a tidy interface for accessing, manipulating, and exploring large-scale career transition data—including job title mappings, specialization metrics, and validated/unvalidated promotion networks—enabling advanced labor market analysis, workforce research, and mobility modeling.
 
 ---

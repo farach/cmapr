@@ -22,6 +22,6 @@ sector, title, frequency, weighted_frequency, SE, SD, SI, onet_soc_codes.
 See accompanying paper for metric methodology.
 }
 \examples{
-si_data <- load_sector_specialization("~/cmap_data/titles/si")
+si_data <- load_sector_specialization("~/cmap_data/dataset/titles/si")
 head(si_data)
 }
