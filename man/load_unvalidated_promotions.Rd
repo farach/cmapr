@@ -26,9 +26,9 @@ Supports loading "edges" (job movements with inference metrics) and "nodes" (tit
 Optionally lists and opens sector-region network .html files for interactive visualization.
 }
 \details{
-Edges: Promotion movements with inference metrics (EPS, JSS, EPDR, promotion_prob).  
-Nodes: Job title frequencies by region/sector.  
-Network: Interactive HTML sector-region visualization files.  
+Edges: Promotion movements with inference metrics (EPS, JSS, EPDR, promotion_prob).
+Nodes: Job title frequencies by region/sector.
+Network: Interactive HTML sector-region visualization files.
 See README in the dataset for column details and methodology.
 }
 \examples{

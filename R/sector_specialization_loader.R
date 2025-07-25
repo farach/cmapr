@@ -19,9 +19,9 @@
 load_sector_specialization <- function(si_dir) {
   # Find all CSV files in the directory
   csv_files <- list.files(si_dir, pattern = "\\.csv$", full.names = TRUE)
-  
+
   # Read and combine all sector CSVs
-  si_data <- purrr::map_dfr(csv_files, ~{
+  si_data <- purrr::map_dfr(csv_files, ~ {
     df <- readr::read_csv(.x, show_col_types = FALSE)
     # Add sector from filename if missing
     if (!"sector" %in% names(df)) {
@@ -30,12 +30,12 @@ load_sector_specialization <- function(si_dir) {
     }
     df
   })
-  
+
   # Standardize column names (if needed)
-  names(si_data) <- names(si_data) |> 
-    stringr::str_replace_all(" ", "_") |> 
+  names(si_data) <- names(si_data) |>
+    stringr::str_replace_all(" ", "_") |>
     tolower()
-  
+
   # Return as tibble
   dplyr::as_tibble(si_data)
 }

@@ -17,8 +17,8 @@
 #' @export
 load_title_map <- function(map_dir) {
   csv_files <- list.files(map_dir, pattern = "\\.csv$", full.names = TRUE)
-  
-  title_map <- purrr::map_dfr(csv_files, ~{
+
+  title_map <- purrr::map_dfr(csv_files, ~ {
     df <- readr::read_csv(.x, show_col_types = FALSE)
     # Add sector from filename if missing
     if (!"sector" %in% names(df)) {
@@ -27,11 +27,11 @@ load_title_map <- function(map_dir) {
     }
     df
   })
-  
+
   # Standardize column names (if needed)
-  names(title_map) <- names(title_map) |> 
-    stringr::str_replace_all(" ", "_") |> 
+  names(title_map) <- names(title_map) |>
+    stringr::str_replace_all(" ", "_") |>
     tolower()
-  
+
   dplyr::as_tibble(title_map)
 }

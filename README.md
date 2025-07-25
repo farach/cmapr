@@ -63,14 +63,14 @@ metadata <- result$metadata
 si_data <- load_sector_specialization(file.path(dataset_dir, "titles/si"))
 si_data |> 
   group_by(sector) |> 
-  arrange(desc(SI)) |> 
+  arrange(desc(si)) |> 
   slice_head(n = 10)
 ```
 
 ### 3. Job Title Mapping Pipeline
 
 ```r
-title_map <- load_title_map(file.path(dataset_dir, "dataset/titles/map"))
+title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
 title_map |> 
   count(sector, title_simplified, sort = TRUE)
 ```

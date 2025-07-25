@@ -26,9 +26,9 @@ Supports loading "edges" (job movements with validation metrics) and "nodes" (ti
 Optionally lists and opens sector/country network .html files for interactive visualization.
 }
 \details{
-Edges: Promotion movements with validation metrics.  
-Nodes: Job title frequencies by sector/country.  
-Network: Interactive HTML sector/country visualization files.  
+Edges: Promotion movements with validation metrics.
+Nodes: Job title frequencies by sector/country.
+Network: Interactive HTML sector/country visualization files.
 See README in the dataset for column details and methodology.
 }
 \examples{
