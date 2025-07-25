@@ -1,3 +1,9 @@
+utils::globalVariables(c(
+  "job_title_from", "job_title_to", 
+  "frequency.x", "frequency.y", 
+  "weighted_frequency.x", "weighted_frequency.y"
+))
+
 #' CMap Data Loader
 #'
 #' Functions to load and prepare CMap data according to
@@ -27,11 +33,6 @@
 #' @importFrom stats runif setNames
 #' @importFrom cli cli_h1 cli_text cli_h2 cli_alert_info cli_alert_warning
 #' @export
-utils::globalVariables(c(
-  "job_title_from", "job_title_to", 
-  "frequency.x", "frequency.y", 
-  "weighted_frequency.x", "weighted_frequency.y"
-))
 load_cmap_data <- function(
     base_path,
     ext_path = NULL,

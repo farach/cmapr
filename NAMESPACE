@@ -2,6 +2,7 @@
 
 export(cmap_example_data)
 export(download_cmap_data)
+export(load_cmap_data)
 importFrom(cli,cli_alert_info)
 importFrom(cli,cli_alert_warning)
 importFrom(cli,cli_h1)
