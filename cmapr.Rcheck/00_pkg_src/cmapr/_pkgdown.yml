@@ -1,0 +1,38 @@
+url: https://farach.github.io/cmapr/
+logo: man/figures/cmapr-hex.png
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left:  [reference, articles, news]
+    right: [github]
+
+reference:
+  - title: "Main Functions"
+    contents:
+      - download_cmap_data
+      - load_cmap_data
+      - load_title_map
+      - load_sector_specialization
+      - load_validated_promotions
+      - load_unvalidated_promotions
+      - cmap_example_data
+      - find_csv_files
+      - model_data
+
+articles:
+  - title: "Get Started"
+    contents:
+      - intro
+  - title: "Analyzing Career Mobility"
+    contents:
+      - exploring_career_mobility
+
+news:
+  one_page: true
+
+github:
+  url: "https://github.com/farach/cmapr"
+
