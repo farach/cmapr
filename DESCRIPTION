@@ -20,11 +20,13 @@ Imports:
     magrittr,
     purrr,
     readr,
+    rlang,
     stringr,
     tibble
 Suggests:
     ggplot2,
     tidyr,
+    vroom,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

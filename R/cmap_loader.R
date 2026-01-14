@@ -43,20 +43,15 @@ load_cmap_data <- function(
 
   if (verbose) {
     cli::cli_h1("CMap Data Loading")
-    cli::cli_text("Base path: {base_path}")
-    if (!is.null(ext_path)) cli::cli_text("Extended path: {ext_path}")
-    if (!is.null(output_path)) cli::cli_text("Output path: {output_path}")
-    cli::cli_text("User: {Sys.info()[['user']]}")
-    cli::cli_text("Time: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}")
+    cmap_log("info", "Base path: {base_path}")
+    if (!is.null(ext_path)) cmap_log("info", "Extended path: {ext_path}")
+    if (!is.null(output_path)) cmap_log("info", "Output path: {output_path}")
+    cmap_log("info", "User: {Sys.info()[['user']]}")
+    cmap_log("info", "Time: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}")
   }
 
   if (!is.null(output_path)) {
     dir.create(output_path, showWarnings = FALSE, recursive = TRUE)
-  }
-
-  # Utility to list CSV files recursively
-  find_csv_files <- function(dir_path) {
-    list.files(dir_path, pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
   }
 
   # Directory analysis (optional, for reporting)
@@ -71,7 +66,7 @@ load_cmap_data <- function(
     )
     purrr::walk(dirs, function(.x) {
       if (dir.exists(.x)) {
-        cli::cli_alert_success("Directory exists: {.path {.x}}")
+        cmap_log("success", "Directory exists: {.path {.x}}")
       } else {
         cli::cli_alert_danger("Directory missing: {.path {.x}}")
       }
@@ -81,7 +76,7 @@ load_cmap_data <- function(
   # Load promotion data (validated/unvalidated)
   load_promotion_df <- function(base_dir, is_validated = TRUE) {
     files <- find_csv_files(base_dir)
-    if (verbose) cli::cli_alert_info("Found {length(files)} promotion files in {base_dir}")
+    if (verbose) cmap_log("info", "Found {length(files)} promotion files in {base_dir}")
     required_cols <- c(
       "job_title_from", "job_title_to", "promotion_probability",
       "region", "sector", "validated", "source_file"
@@ -143,7 +138,7 @@ load_cmap_data <- function(
           dplyr::select(dat, dplyr::all_of(required_cols), dplyr::everything())
         },
         error = function(e) {
-          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          if (verbose) cmap_log("warn", "Error reading {file_path}: {e$message}")
           NULL
         }
       )
@@ -161,7 +156,7 @@ load_cmap_data <- function(
   # Load title mappings
   load_title_mappings <- function() {
     files <- find_csv_files(file.path(base_path, "titles/map"))
-    if (verbose) cli::cli_alert_info("Found {length(files)} title mapping files")
+    if (verbose) cmap_log("info", "Found {length(files)} title mapping files")
     purrr::map_dfr(files, function(file_path) {
       tryCatch(
         {
@@ -171,7 +166,7 @@ load_cmap_data <- function(
           dplyr::mutate(dat, sector = sector)
         },
         error = function(e) {
-          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          if (verbose) cmap_log("warn", "Error reading {file_path}: {e$message}")
           NULL
         }
       )
@@ -182,7 +177,7 @@ load_cmap_data <- function(
   # Load specialization indices
   load_specialization_indices <- function() {
     files <- find_csv_files(file.path(base_path, "titles/si"))
-    if (verbose) cli::cli_alert_info("Found {length(files)} specialization index files")
+    if (verbose) cmap_log("info", "Found {length(files)} specialization index files")
     expected_cols <- c("job_title", "si", "se", "sd", "weighted_freq")
     alt_cols <- c(
       "title", "specialization_index", "sector_exclusivity",
@@ -216,7 +211,7 @@ load_cmap_data <- function(
           dplyr::select(dat, dplyr::all_of(c("job_title", "si", "se", "sd", "weighted_freq", "sector")), dplyr::everything())
         },
         error = function(e) {
-          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          if (verbose) cmap_log("warn", "Error reading {file_path}: {e$message}")
           NULL
         }
       )
