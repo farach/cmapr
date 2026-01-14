@@ -83,6 +83,44 @@ metadata   <- result$metadata        # Job title and sector metadata
 
 You now have instant access to the core CMap tables, ready for use with dplyr, tidyr, and ggplot2.
 
+### **Advanced Loading Options**
+
+The loader functions support additional options for performance and customization:
+
+```{r, eval=FALSE}
+# Load title maps with custom options
+title_map <- load_title_map(
+  file.path(dataset_dir, "titles/map"),
+  clean = TRUE,      # Standardize column names (default)
+  reader = "vroom"   # Use vroom for faster loading
+)
+
+# Load validated promotions with vroom
+validated_edges <- load_validated_promotions(
+  "edges", 
+  file.path(dataset_dir, "promotions/validated"),
+  reader = "vroom"
+)
+```
+
+### **Data Summarization**
+
+Use the built-in summarizer functions to quickly analyze the data:
+
+```{r, eval=FALSE}
+# Summarize transitions by sector
+sector_summary <- summarize_transitions(model_data, by = "sector")
+
+# Get top 10 transitions per sector
+top_moves <- top_transitions(model_data, by = "sector", n = 10)
+
+# Generate sector profiles
+profiles <- sector_profile(model_data)
+
+# Analyze title frequencies
+title_freq <- title_frequency(title_map, by = "sector", n = 20)
+```
+
 ------------------------------------------------------------------------
 
 ## **Next Steps**

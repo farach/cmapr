@@ -81,7 +81,11 @@ si_data |>
 ### 3. Job Title Mapping Pipeline
 
 ``` r
+# Load with default settings (clean names enabled)
 title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
+
+# Or use vroom for faster loading of large datasets
+title_map <- load_title_map(file.path(dataset_dir, "titles/map"), reader = "vroom")
 
 title_map |> 
   count(sector, title_simplified, sort = TRUE)
@@ -92,7 +96,11 @@ title_map |>
 #### Validated (human-annotated)
 
 ``` r
+# Load with readr (default)
 validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"))
+
+# Or use vroom for faster loading
+validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"), reader = "vroom")
 
 validated_nodes <- load_validated_promotions("nodes", file.path(dataset_dir, "promotions/validated"))
 
@@ -109,6 +117,25 @@ unvalidated_nodes <- load_unvalidated_promotions("nodes", file.path(dataset_dir,
 
 # Open interactive HTML network for a sector/region
 load_unvalidated_promotions("network", file.path(dataset_dir, "promotions/unvalidated"), open_html = "EUROPE_finance.html")
+```
+
+### 5. Data Summarization & Analysis
+
+``` r
+# Summarize transitions by sector and region
+summary <- summarize_transitions(model_data, by = c("sector", "region"))
+
+# Get top transitions
+top_10 <- top_transitions(model_data, by = "sector", n = 10)
+
+# Calculate promotion rates
+rates <- promotion_rate(validated_edges, by = c("sector", "region"))
+
+# Generate sector profiles
+profiles <- sector_profile(model_data, by = "sector")
+
+# Analyze title frequencies
+title_freq <- title_frequency(title_map, by = "sector", n = 20)
 ```
 
 ------------------------------------------------------------------------
