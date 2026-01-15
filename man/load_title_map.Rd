@@ -2,25 +2,44 @@
 % Please edit documentation in R/title_map_loader.R
 \name{load_title_map}
 \alias{load_title_map}
-\title{Load Job Title Mapping Data}
+\title{Load and Augment Job Title Mapping Data}
 \usage{
-load_title_map(map_dir)
+load_title_map(
+  map_dir,
+  columns = NULL,
+  sector_filter = NULL,
+  add_nlp = TRUE,
+  summarize = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{map_dir}{Path to the directory containing sector mapping CSV files (e.g., "~/cmap_data/dataset/titles/map").}
+
+\item{columns}{Optional character vector of columns to select (default: NULL = all columns).}
+
+\item{sector_filter}{Optional regex string to filter sectors (default: NULL = all sectors).}
+
+\item{add_nlp}{Logical, add NLP-derived columns (title_type, title_similarity, etc.)? Default: TRUE.}
+
+\item{summarize}{Logical, return sector-level summary statistics? Default: FALSE.}
+
+\item{verbose}{Logical, print progress/messages? Default: TRUE.}
 }
 \value{
-A tibble with columns: sector, title_cleaned, frequency_cleaned, title_generalized, frequency_generalized, title_simplified, frequency_simplified.
+A tibble with added variables and clean output, or a list if summarize=TRUE.
 }
 \description{
-Reads all sector-specific CSV files from the `dataset/titles/map` folder and combines them into one tidy dataframe.
-Each file traces job titles through the standardization pipeline: cleaning, generalization, and simplification.
+Reads all sector-specific CSV files from the `dataset/titles/map` folder and combines them into one tidy dataframe,
+adding advanced NLP features, summary statistics, and progress bar feedback.
 }
 \details{
 Each file in `map_dir` should be named <sector>.csv and provide columns as described above.
+The function now adds NLP-derived variables, sector-level summaries, and a progress bar.
 See the accompanying publication for methodology.
 }
 \examples{
-title_map <- load_title_map("~/cmap_data/dataset/titles/map")
-dplyr::glimpse(title_map)
+title_map <- load_title_map("~/cmap_data/dataset/titles/map", add_nlp = TRUE, summarize = TRUE)
+title_map$title_map \%>\% count(title_type)
+title_map$sector_stats \%>\% arrange(desc(mean_length))
 }

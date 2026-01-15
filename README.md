@@ -117,16 +117,18 @@ load_unvalidated_promotions("network", file.path(dataset_dir, "promotions/unvali
 
 The CMap dataset was constructed by aggregating over **546 million job experiences** from **220+ million publicly available CVs**, covering **197 countries** and **24 sectors** (e.g., health, finance, manufacturing). Job titles were cleaned and standardized into \~123,000 unique entries using large language models and multi-stage NLP pipelines.
 
--    **Specialization Index (SI):**\
+-   **Specialization Index (SI):**\
     A numerical indicator (0–1) quantifying how sector-specific a job title is. Higher values indicate narrower occupational focus.
 
--    **Career Mobility Data:**
+-   **Career Mobility Data:**
 
-    -   \~32k human-labeled promotions (U.S. and U.K.)
+```         
+-   \~32k human-labeled promotions (U.S. and U.K.)
 
-    -   \~61k statistically inferred transitions using a model trained on validated pairs
+-   \~61k statistically inferred transitions using a model trained on validated pairs
 
-    -   Model performance: **97.5% balanced accuracy**, **98.9% precision**, **99.2% recall**
+-   Model performance: **97.5% balanced accuracy**, **98.9% precision**, **99.2% recall**
+```
 
 ------------------------------------------------------------------------
 

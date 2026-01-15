@@ -2,26 +2,44 @@
 % Please edit documentation in R/sector_specialization_loader.R
 \name{load_sector_specialization}
 \alias{load_sector_specialization}
-\title{Load Sector-Specific Title Specialization Data}
+\title{Load and Augment Sector-Specific Title Specialization Data}
 \usage{
-load_sector_specialization(si_dir)
+load_sector_specialization(
+  si_dir,
+  columns = NULL,
+  sector_filter = NULL,
+  add_nlp = TRUE,
+  summarize = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{si_dir}{Path to the directory containing sector CSV files (e.g., "~/cmap_data/titles/si").}
+
+\item{columns}{Optional character vector of columns to select (default: NULL = all columns).}
+
+\item{sector_filter}{Optional regex string to filter sectors (default: NULL = all sectors).}
+
+\item{add_nlp}{Logical, add NLP-derived columns (title_type, title_length, etc.)? Default: TRUE.}
+
+\item{summarize}{Logical, return sector-level summary statistics? Default: FALSE.}
+
+\item{verbose}{Logical, print progress/messages? Default: TRUE.}
 }
 \value{
-A tibble with columns: sector, title, frequency, weighted_frequency, SE, SD, SI, onet_soc_codes.
+A tibble with added variables and clean output, or a list if summarize=TRUE.
 }
 \description{
 Reads all sector-specific CSV files from the `titles/si` folder and combines them into a single tidy dataframe.
-Each file provides job title frequencies and specialization metrics for one industry sector.
+Adds NLP-derived features, sector-level summary statistics, and a progress bar for user feedback.
 }
 \details{
 Each file in `si_dir` must be named `<sector>.csv` and include columns:
 sector, title, frequency, weighted_frequency, SE, SD, SI, onet_soc_codes.
+The function now adds NLP-derived variables, sector-level summaries, and a progress bar.
 See accompanying paper for metric methodology.
 }
 \examples{
-si_data <- load_sector_specialization("~/cmap_data/dataset/titles/si")
-head(si_data)
+si_data <- load_sector_specialization("~/cmap_data/dataset/titles/si", add_nlp = TRUE, summarize = TRUE)
+si_data$sector_stats \%>\% arrange(desc(mean_title_length))
 }
