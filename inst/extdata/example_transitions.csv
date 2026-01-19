@@ -1,0 +1,11 @@
+sector,region,job_title_from,job_title_to,transition_weighted_count,si_from,si_to
+Technology,North America,Software Engineer,Senior Software Engineer,1250,0.85,0.88
+Technology,North America,Senior Software Engineer,Engineering Manager,890,0.88,0.72
+Technology,Europe,Data Analyst,Data Scientist,720,0.78,0.82
+Healthcare,North America,Registered Nurse,Nurse Manager,650,0.91,0.85
+Healthcare,Europe,Medical Assistant,Registered Nurse,580,0.75,0.91
+Finance,North America,Financial Analyst,Senior Financial Analyst,920,0.82,0.86
+Finance,Asia,Accountant,Finance Manager,410,0.79,0.71
+Technology,Asia,Junior Developer,Software Engineer,680,0.72,0.85
+Healthcare,North America,Physician Assistant,Medical Director,320,0.88,0.76
+Finance,Europe,Investment Analyst,Portfolio Manager,290,0.84,0.81

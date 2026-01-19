@@ -11,24 +11,28 @@ Description:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: 
-    R (>= 3.5)
+Depends:
+    R (>= 4.1.0)
 Imports:
     cli,
     dplyr,
     janitor,
-    magrittr,
     purrr,
     readr,
+    rlang,
     stringr,
     tibble
 Suggests:
     ggplot2,
-    tidyr,
+    ggraph,
+    igraph,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidygraph,
+    tidyr,
+    vroom
 URL: https://farach.github.io/cmapr, https://github.com/farach/cmapr
 BugReports: https://github.com/farach/cmapr/issues
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

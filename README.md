@@ -20,6 +20,12 @@ The package provides a tidy interface for accessing, manipulating, and exploring
     ▸ **Unvalidated:** \~61,000 model-inferred transitions from \~10 million CVs (global)\
     Graphs include edge weights, validation status, and optional interactive HTML views.
 
+-   **Career Path Analysis**\
+    Discover promotion paths between job titles with `find_career_paths()` and explore career ladders from any starting position with `career_ladder()`.
+
+-   **Network Analysis Integration**\
+    Convert promotion data to igraph or tidygraph objects with `as_igraph()` and `as_tidygraph()` for advanced network analysis, centrality measures, and visualization with ggraph.
+
 -   **Tidyverse-First API**\
     All functions return `tibble` objects or lists of tibbles, designed to work fluidly with `dplyr`, `tidyr`, `ggplot2`, and the broader tidyverse ecosystem.
 
@@ -62,6 +68,9 @@ Notes:
 ### 1. Load Core Data
 
 ``` r
+library(cmapr)
+library(dplyr)
+
 result <- load_cmap_data(base_path = dataset_dir)
 model_data <- result$model_data
 metadata <- result$metadata
@@ -72,19 +81,34 @@ metadata <- result$metadata
 ``` r
 si_data <- load_sector_specialization(file.path(dataset_dir, "titles/si"))
 
-si_data |> 
-  group_by(sector) |> 
-  arrange(desc(si)) |> 
+# Top specialized titles per sector
+si_data |>
+  group_by(sector) |>
+  arrange(desc(si)) |>
   slice_head(n = 10)
 ```
 
 ### 3. Job Title Mapping Pipeline
 
 ``` r
+# Fast load (default) - uses vroom, skips derived features
 title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
 
-title_map |> 
-  count(sector, title_simplified, sort = TRUE)
+# Load with derived features (slower - adds title_type, word counts, etc.)
+title_map_features <- load_title_map(
+  file.path(dataset_dir, "titles/map"),
+  add_features = TRUE
+)
+
+# Load only specific sectors (much faster for targeted analysis)
+tech_titles <- load_title_map(
+  file.path(dataset_dir, "titles/map"),
+  sector_filter = "Information Technology"
+)
+
+# Count titles by sector
+title_map |>
+  count(sector, title_cleaned, sort = TRUE)
 ```
 
 ### 4. Validated & Unvalidated Promotions Networks
@@ -92,9 +116,17 @@ title_map |>
 #### Validated (human-annotated)
 
 ``` r
+# Load with readr (default)
 validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"))
 
+# Or use vroom for faster loading
+validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"), reader = "vroom")
+
 validated_nodes <- load_validated_promotions("nodes", file.path(dataset_dir, "promotions/validated"))
+
+# List available network visualizations
+networks <- load_validated_promotions("network", file.path(dataset_dir, "promotions/validated"))
+print(networks)
 
 # Open interactive HTML network for a sector/country
 load_validated_promotions("network", file.path(dataset_dir, "promotions/validated"), open_html = "US_finance.html")
@@ -109,6 +141,81 @@ unvalidated_nodes <- load_unvalidated_promotions("nodes", file.path(dataset_dir,
 
 # Open interactive HTML network for a sector/region
 load_unvalidated_promotions("network", file.path(dataset_dir, "promotions/unvalidated"), open_html = "EUROPE_finance.html")
+```
+
+### 5. Data Summarization & Analysis
+
+``` r
+# Summarize transitions by sector and region (using model_data)
+summary <- summarize_transitions(model_data, by = c("sector", "region"))
+
+# Get top transitions per sector
+top_10 <- top_transitions(model_data, by = "sector", n = 10)
+
+# Calculate promotion rates from validated edges
+# Note: validated_edges uses "country_binned" not "region"
+rates <- promotion_rate(validated_edges, by = c("sector", "country_binned"))
+
+# Generate sector profiles
+profiles <- sector_profile(model_data, by = "sector")
+
+# Analyze title frequencies
+title_freq <- title_frequency(title_map, by = "sector", n = 20)
+```
+
+### 6. Career Path Analysis
+
+``` r
+# Find all paths from "analyst" to "director"
+paths <- find_career_paths(
+  validated_edges,
+  from = "analyst",
+  to = "director",
+  max_depth = 5
+)
+print(paths$summary)
+
+# Explore career ladder from a starting title
+ladder <- career_ladder(
+  unvalidated_edges,
+  start_title = "software engineer",
+  depth = 4,
+  sector = "Information Technology"
+)
+print(ladder$ladder)
+```
+
+### 7. Network Analysis with igraph/tidygraph
+
+``` r
+# Convert to igraph for network analysis
+library(igraph)
+g <- as_igraph(validated_edges, sector = "Accounting & Legal")
+
+# Basic metrics
+vcount(g)  # number of job titles
+ecount(g)  # number of transitions
+diameter(g)  # longest shortest path
+
+# Find most central titles (PageRank)
+pr <- page_rank(g)$vector
+head(sort(pr, decreasing = TRUE), 10)
+
+# Convert to tidygraph for tidy network analysis
+library(tidygraph)
+library(dplyr)
+
+tg <- as_tidygraph(unvalidated_edges)
+
+tg |>
+  activate(nodes) |>
+  mutate(centrality = centrality_pagerank()) |>
+  arrange(desc(centrality)) |>
+  as_tibble() |>
+  head(10)
+
+# Get network summary statistics
+network_summary(validated_edges, sector = "healthcare")
 ```
 
 ------------------------------------------------------------------------

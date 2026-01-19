@@ -1,9 +1,3 @@
-utils::globalVariables(c(
-  "job_title_from", "job_title_to", 
-  "frequency.x", "frequency.y", 
-  "weighted_frequency.x", "weighted_frequency.y"
-))
-
 #' CMap Data Loader
 #'
 #' Functions to load and prepare CMap data according to
@@ -24,11 +18,9 @@ utils::globalVariables(c(
 #'   result <- load_cmap_data(base_path = dataset_dir)
 #' }
 #' @importFrom dplyr mutate left_join select rename_with bind_rows across as_tibble any_of
-#' @importFrom purrr map_lgl
-#' @importFrom magrittr %>%
+#' @importFrom purrr map_lgl map list_rbind walk
 #' @importFrom readr read_csv
 #' @importFrom janitor clean_names
-#' @importFrom purrr map_dfr walk
 #' @importFrom stringr str_detect str_extract str_remove
 #' @importFrom stats runif setNames
 #' @importFrom cli cli_h1 cli_text cli_h2 cli_alert_info cli_alert_warning
@@ -43,20 +35,15 @@ load_cmap_data <- function(
 
   if (verbose) {
     cli::cli_h1("CMap Data Loading")
-    cli::cli_text("Base path: {base_path}")
-    if (!is.null(ext_path)) cli::cli_text("Extended path: {ext_path}")
-    if (!is.null(output_path)) cli::cli_text("Output path: {output_path}")
-    cli::cli_text("User: {Sys.info()[['user']]}")
-    cli::cli_text("Time: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}")
+    cli::cli_alert_info("Base path: {.path {base_path}}")
+    if (!is.null(ext_path)) cli::cli_alert_info("Extended path: {.path {ext_path}}")
+    if (!is.null(output_path)) cli::cli_alert_info("Output path: {.path {output_path}}")
+    cli::cli_alert_info("User: {Sys.info()[['user']]}")
+    cli::cli_alert_info("Time: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}")
   }
 
   if (!is.null(output_path)) {
     dir.create(output_path, showWarnings = FALSE, recursive = TRUE)
-  }
-
-  # Utility to list CSV files recursively
-  find_csv_files <- function(dir_path) {
-    list.files(dir_path, pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
   }
 
   # Directory analysis (optional, for reporting)
@@ -81,15 +68,15 @@ load_cmap_data <- function(
   # Load promotion data (validated/unvalidated)
   load_promotion_df <- function(base_dir, is_validated = TRUE) {
     files <- find_csv_files(base_dir)
-    if (verbose) cli::cli_alert_info("Found {length(files)} promotion files in {base_dir}")
+    if (verbose) cli::cli_alert_info("Found {length(files)} promotion files in {.path {base_dir}}")
     required_cols <- c(
       "job_title_from", "job_title_to", "promotion_probability",
       "region", "sector", "validated", "source_file"
     )
-    promotions <- purrr::map_dfr(files, function(file_path) {
+    promotions <- purrr::map(files, function(file_path) {
       result <- tryCatch(
         {
-          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
+          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) |>
             janitor::clean_names()
           n <- nrow(dat)
           # Infer region/sector from file path
@@ -143,12 +130,12 @@ load_cmap_data <- function(
           dplyr::select(dat, dplyr::all_of(required_cols), dplyr::everything())
         },
         error = function(e) {
-          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          if (verbose) cli::cli_alert_warning("Error reading {.path {file_path}}: {e$message}")
           NULL
         }
       )
       result
-    })
+    }) |> purrr::list_rbind()
     promotions
   }
 
@@ -162,20 +149,20 @@ load_cmap_data <- function(
   load_title_mappings <- function() {
     files <- find_csv_files(file.path(base_path, "titles/map"))
     if (verbose) cli::cli_alert_info("Found {length(files)} title mapping files")
-    purrr::map_dfr(files, function(file_path) {
+    purrr::map(files, function(file_path) {
       tryCatch(
         {
-          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
+          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) |>
             janitor::clean_names()
           sector <- tools::file_path_sans_ext(basename(file_path))
           dplyr::mutate(dat, sector = sector)
         },
         error = function(e) {
-          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          if (verbose) cli::cli_alert_warning("Error reading {.path {file_path}}: {e$message}")
           NULL
         }
       )
-    })
+    }) |> purrr::list_rbind()
   }
   title_mappings <- load_title_mappings()
 
@@ -189,10 +176,10 @@ load_cmap_data <- function(
       "sector_dominance", "weighted_frequency"
     )
     col_mapping <- stats::setNames(expected_cols, alt_cols)
-    purrr::map_dfr(files, function(file_path) {
+    purrr::map(files, function(file_path) {
       tryCatch(
         {
-          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) %>%
+          dat <- readr::read_csv(file_path, na = c("NA", "", "NULL"), show_col_types = FALSE) |>
             janitor::clean_names()
           sector <- tools::file_path_sans_ext(basename(file_path))
           dat <- dplyr::mutate(dat, sector = sector)
@@ -216,11 +203,11 @@ load_cmap_data <- function(
           dplyr::select(dat, dplyr::all_of(c("job_title", "si", "se", "sd", "weighted_freq", "sector")), dplyr::everything())
         },
         error = function(e) {
-          if (verbose) cli::cli_alert_warning("Error reading {file_path}: {e$message}")
+          if (verbose) cli::cli_alert_warning("Error reading {.path {file_path}}: {e$message}")
           NULL
         }
       )
-    })
+    }) |> purrr::list_rbind()
   }
   specialization_indices <- load_specialization_indices()
 
@@ -238,13 +225,13 @@ load_cmap_data <- function(
     # Join with specialization
     if (nrow(spec_data) > 0) {
       # Source job join
-      promotions <- promotions %>%
-        dplyr::left_join(spec_data, by = c("job_title_from" = "job_title", "sector" = "sector")) %>%
-        dplyr::rename_with(~ paste0(.x, "_from"), c("si", "se", "sd", "weighted_freq"))
+      promotions <- promotions |>
+        dplyr::left_join(spec_data, by = c("job_title_from" = "job_title", "sector" = "sector")) |>
+        dplyr::rename_with(\(x) paste0(x, "_from"), c("si", "se", "sd", "weighted_freq"))
       # Target job join
-      promotions <- promotions %>%
-        dplyr::left_join(spec_data, by = c("job_title_to" = "job_title", "sector" = "sector")) %>%
-        dplyr::rename_with(~ paste0(.x, "_to"), c("si", "se", "sd", "weighted_freq"))
+      promotions <- promotions |>
+        dplyr::left_join(spec_data, by = c("job_title_to" = "job_title", "sector" = "sector")) |>
+        dplyr::rename_with(\(x) paste0(x, "_to"), c("si", "se", "sd", "weighted_freq"))
       # Fill missing values
       for (col in c(
         "si_from", "se_from", "sd_from", "weighted_freq_from",
@@ -263,7 +250,7 @@ load_cmap_data <- function(
       }
     }
     # Derived features
-    promotions <- promotions %>%
+    promotions <- promotions |>
       dplyr::mutate(
         si_difference = si_to - si_from,
         sd_difference = sd_to - sd_from,
@@ -273,22 +260,22 @@ load_cmap_data <- function(
         upward_mobility = as.integer(promotion_probability > 0.5),
         career_stagnation = as.integer(promotion_probability < 0.2),
         job_hopping_potential = as.integer(weighted_freq_to > weighted_freq_from * 1.5)
-      ) %>%
+      ) |>
       dplyr::mutate(dplyr::across(c(region, sector, validated), as.factor))
 
     # Remove columns with all NA
-    na_cols <- names(which(purrr::map_lgl(promotions, ~ all(is.na(.x)))))
-    promotions <- promotions %>% dplyr::select(-any_of(na_cols))
+    na_cols <- names(which(purrr::map_lgl(promotions, \(x) all(is.na(x)))))
+    promotions <- promotions |> dplyr::select(-any_of(na_cols))
 
     # Remove duplicate columns by name, keeping the first occurrence
     promotions <- promotions[, !duplicated(names(promotions))]
 
     # Remove ambiguous columns 'title.y', 'onet_soc_codes.y', and any pre-existing conflicting names before renaming
-    promotions <- promotions %>%
+    promotions <- promotions |>
       dplyr::select(-any_of(c("title.y", "onet_soc_codes.y", "title", "onet_soc_codes")))
 
     # Explicit final renaming
-    promotions <- promotions %>%
+    promotions <- promotions |>
       dplyr::rename(
         job_title_from = job_title_from,
         job_title_to = job_title_to,

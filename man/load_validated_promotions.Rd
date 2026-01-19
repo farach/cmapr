@@ -7,7 +7,8 @@
 load_validated_promotions(
   subfolder = c("edges", "nodes", "network"),
   data_dir,
-  open_html = NULL
+  open_html = NULL,
+  reader = c("readr", "vroom")
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ load_validated_promotions(
 \item{data_dir}{Path to root validated promotions directory (e.g., "~/cmap_data/dataset/promotions/validated").}
 
 \item{open_html}{Optional: name of .html file to open from the network folder (e.g., "US_accounting_and_legal.html").}
+
+\item{reader}{Character string specifying which CSV reader to use: "readr" (default) or "vroom".}
 }
 \value{
 For "edges" or "nodes": dataframe (tibble) with validated promotion data. For "network": list of available HTML files (invisible if opening one).

@@ -36,6 +36,7 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/farach/cmapr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -81,42 +82,19 @@ reproducibility.</p>
 is within its sector.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">si_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_sector_specialization.html">load_sector_specialization</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"titles/si"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">si_data</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">si</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">slice_head</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">sector</span>, <span class="va">title</span>, <span class="va">si</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 240 × 3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   sector [24]</span></span></span>
-<span><span class="co">#&gt;    sector             title                         si</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Accounting &amp; Legal Assistant General Attorney 0.988</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Accounting &amp; Legal Audit Senior Assistant     0.976</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Accounting &amp; Legal Deputy General Attorney    0.967</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Accounting &amp; Legal Chartered Legal Executive  0.960</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Accounting &amp; Legal Trainee Advocate           0.960</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Accounting &amp; Legal Consultant Solicitor       0.957</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Accounting &amp; Legal Attorney Partner           0.955</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Accounting &amp; Legal Litigation Partner         0.951</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Accounting &amp; Legal Real Estates Attorney      0.943</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Accounting &amp; Legal Accounting Chief Officer   0.943</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 230 more rows</span></span></span></code></pre></div>
+<span><span class="va">si_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">si</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sector</span>, <span class="va">title</span>, <span class="va">si</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Tip:</strong><br>
 To find the most specialized roles in a sector, filter by high SI
 scores.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">si_data</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sector</span> <span class="op">==</span> <span class="st">"Information Technology"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">si</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">slice_head</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 8</span></span></span>
-<span><span class="co">#&gt;   sector     title frequency weighted_frequency    se    sd    si onet_soc_codes</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Informati… Inst…      <span style="text-decoration: underline;">2</span>234               37.9     1 0.960 0.960 49-2094.00;17…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Informati… SAP …      <span style="text-decoration: underline;">2</span>102               35.7     1 0.958 0.958 <span style="color: #BB0000;">NA</span>            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Informati… Pres…      <span style="text-decoration: underline;">1</span>106               18.8     1 0.928 0.928 13-1199.00;15…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Informati… Acco…       978               16.6     1 0.920 0.920 13-1161.01;13…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> Informati… Orac…       961               16.3     1 0.919 0.919 13-2054.00;13…</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">si_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sector</span> <span class="op">==</span> <span class="st">"Information Technology"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">si</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">
@@ -127,47 +105,21 @@ scores.</p>
 standardized and grouped.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">title_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_title_map.html">load_title_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"titles/map"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">title_map</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">count</span><span class="op">(</span><span class="va">sector</span>, <span class="va">title_simplified</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 418,664 × 3</span></span></span>
-<span><span class="co">#&gt;    sector                       title_simplified     n</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Business Services            Manager          <span style="text-decoration: underline;">51</span>574</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Manufacturing                Manager          <span style="text-decoration: underline;">46</span>876</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Information Technology       Manager          <span style="text-decoration: underline;">37</span>014</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Retail                       Manager          <span style="text-decoration: underline;">35</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Finance                      Manager          <span style="text-decoration: underline;">25</span>450</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Oil, Gas, Energy &amp; Utilities Manager          <span style="text-decoration: underline;">18</span>879</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Transportation &amp; Logistics   Manager          <span style="text-decoration: underline;">16</span>136</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Business Services            Assistant        <span style="text-decoration: underline;">15</span>550</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Health Care                  Manager          <span style="text-decoration: underline;">15</span>223</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Non-Profit                   Manager          <span style="text-decoration: underline;">14</span>689</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 418,654 more rows</span></span></span></code></pre></div>
+<span></span>
+<span><span class="co"># View available columns</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">title_map</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Count titles by sector</span></span>
+<span><span class="va">title_map</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">sector</span>, <span class="va">title_cleaned</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Tip:</strong><br>
 Use this mapping to collapse variant job titles and compute sector-level
 frequencies.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">title_map</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">sector</span>, <span class="va">title_simplified</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarise</span><span class="op">(</span>total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">frequency_simplified</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">sector</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">total</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `summarise()` has grouped output by 'sector'. You can override using the</span></span>
-<span><span class="co">#&gt; `.groups` argument.</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 418,664 × 3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   sector [24]</span></span></span>
-<span><span class="co">#&gt;    sector             title_simplified              total</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Accounting &amp; Legal Manager                  <span style="text-decoration: underline;">2</span>092<span style="text-decoration: underline;">621</span>896</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Accounting &amp; Legal Assistant                 746<span style="text-decoration: underline;">253</span>906</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Accounting &amp; Legal Accountant                460<span style="text-decoration: underline;">474</span>380</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Accounting &amp; Legal Associate                 286<span style="text-decoration: underline;">909</span>623</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Accounting &amp; Legal Law Clerk                 244<span style="text-decoration: underline;">412</span>335</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Accounting &amp; Legal Administrative Assistant  171<span style="text-decoration: underline;">775</span>190</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Accounting &amp; Legal Legal Intern              164<span style="text-decoration: underline;">257</span>104</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Accounting &amp; Legal Legal Assistant           150<span style="text-decoration: underline;">953</span>085</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Accounting &amp; Legal Director                  126<span style="text-decoration: underline;">512</span>640</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Accounting &amp; Legal Attorney                  122<span style="text-decoration: underline;">948</span>976</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 418,654 more rows</span></span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">title_map</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">sector</span>, <span class="va">title_cleaned</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">frequency_cleaned</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">sector</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">total</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">
@@ -194,13 +146,11 @@ validated (manually reviewed) and unvalidated (algorithmic).</p>
 <p><strong>Tip:</strong><br>
 Investigate the most frequent promotion paths in a sector:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">unvalidated_edges</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sector</span> <span class="op">==</span> <span class="st">"Healthcare"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">frequency</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">slice_head</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span>, <span class="va">frequency</span>, <span class="va">promotion_prob</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 variables: from &lt;chr&gt;, to &lt;chr&gt;, frequency &lt;dbl&gt;, promotion_prob &lt;dbl&gt;</span></span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">unvalidated_edges</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sector</span> <span class="op">==</span> <span class="st">"Healthcare"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">frequency</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span>, <span class="va">frequency</span>, <span class="va">promotion_prob</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -214,19 +164,18 @@ available):</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/load_validated_promotions.html">load_validated_promotions</a></span><span class="op">(</span><span class="st">"network"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dataset_dir</span>, <span class="st">"promotions/validated"</span><span class="op">)</span>, open_html <span class="op">=</span> <span class="st">"US_finance.html"</span><span class="op">)</span></span></code></pre></div>
 <p>Or plot a simple summary using ggplot2:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">top_edges</span> <span class="op">&lt;-</span> <span class="va">unvalidated_edges</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">frequency</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">slice_head</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">top_edges</span> <span class="op">&lt;-</span> <span class="va">unvalidated_edges</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">frequency</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">top_edges</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">from</span>, <span class="va">frequency</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">frequency</span>, fill <span class="op">=</span> <span class="va">to</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_col</span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">sector</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Most Frequent Career Transitions by Sector"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">top_edges</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">from</span>, <span class="va">frequency</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">frequency</span>, fill <span class="op">=</span> <span class="va">to</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">sector</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Most Frequent Career Transitions by Sector"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"From Title"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"Frequency"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<p><img src="exploring_career_mobility_files/figure-html/career-transitions-plot-1.png" width="1152"></p>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">

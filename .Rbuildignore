@@ -1,3 +1,13 @@
 ^LICENSE\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^CLAUDE\.md$
+^codecov\.yml$
+^README\.Rmd$
+^FUTURE\.md$
+^cmapr_hex\.png$
+^\.claude$

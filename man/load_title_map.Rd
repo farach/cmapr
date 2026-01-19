@@ -8,38 +8,88 @@ load_title_map(
   map_dir,
   columns = NULL,
   sector_filter = NULL,
-  add_nlp = TRUE,
+  clean = TRUE,
+  reader = c("vroom", "readr"),
+  add_features = FALSE,
+  compute_similarity = FALSE,
   summarize = FALSE,
   verbose = TRUE
 )
 }
 \arguments{
-\item{map_dir}{Path to the directory containing sector mapping CSV files (e.g., "~/cmap_data/dataset/titles/map").}
+\item{map_dir}{Path to the directory containing sector mapping CSV files (e.g., "~/cmap_data/titles/map").
+Files are expected to be named like "<sector>.csv".}
 
-\item{columns}{Optional character vector of columns to select (default: NULL = all columns).}
+\item{columns}{Optional character vector of columns to keep (default: NULL = keep all).}
 
-\item{sector_filter}{Optional regex string to filter sectors (default: NULL = all sectors).}
+\item{sector_filter}{Optional regex pattern used to filter sectors based on the derived `sector` column
 
-\item{add_nlp}{Logical, add NLP-derived columns (title_type, title_similarity, etc.)? Default: TRUE.}
+  (default: NULL = keep all sectors).}
 
-\item{summarize}{Logical, return sector-level summary statistics? Default: FALSE.}
+\item{clean}{Logical; if TRUE (default), standardizes column names using janitor::clean_names().}
 
-\item{verbose}{Logical, print progress/messages? Default: TRUE.}
+\item{reader}{Character string specifying which CSV reader to use: "vroom" (default, faster) or "readr".}
+
+\item{add_features}{Logical; if TRUE, adds derived variables such as title lengths and
+a coarse title type classifier. Default is FALSE for performance.}
+
+\item{compute_similarity}{Logical; if TRUE, computes token-based Jaccard similarity between
+`title_cleaned` and `title_generalized`. This is expensive for large datasets. Default is FALSE.}
+
+\item{summarize}{Logical; if TRUE, returns a list with `title_map` and `sector_stats`.}
+
+\item{verbose}{Logical; if TRUE, emits messages (only in interactive sessions).}
 }
 \value{
-A tibble with added variables and clean output, or a list if summarize=TRUE.
+If `summarize = FALSE`, a tibble of title mappings.
+If `summarize = TRUE`, a list with:
+\describe{
+  \item{title_map}{A tibble of the combined mapping data (with optional derived features).}
+  \item{sector_stats}{A tibble of sector/title-type summary statistics.}
+}
 }
 \description{
-Reads all sector-specific CSV files from the `dataset/titles/map` folder and combines them into one tidy dataframe,
-adding advanced NLP features, summary statistics, and progress bar feedback.
+Reads all sector-specific CSV files from `map_dir` and combines them into a single tibble.
+Optionally standardizes column names, filters sectors, selects columns, adds derived features,
+and returns sector-level summary statistics.
 }
 \details{
-Each file in `map_dir` should be named <sector>.csv and provide columns as described above.
-The function now adds NLP-derived variables, sector-level summaries, and a progress bar.
-See the accompanying publication for methodology.
+Each CSV should contain (at minimum) title columns such as `title_cleaned` and typically
+generalized/simplified variants (e.g., `title_generalized`, `title_simplified`) plus frequency fields.
+If a `sector` column is not present, it is derived from the filename.
+
+## Performance Notes
+- Use `reader = "vroom"` (default) for fastest loading
+- Set `add_features = FALSE` (default) to skip derived columns
+- Set `compute_similarity = FALSE` (default) to skip expensive similarity computation
+- Use `sector_filter` to load only specific sectors
+- Use `columns` to load only needed columns
 }
 \examples{
-title_map <- load_title_map("~/cmap_data/dataset/titles/map", add_nlp = TRUE, summarize = TRUE)
-title_map$title_map \%>\% count(title_type)
-title_map$sector_stats \%>\% arrange(desc(mean_length))
+\dontrun{
+dataset_dir <- download_cmap_data("~/cmap_data")
+
+# Fast load - just the data (recommended for large datasets)
+title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
+
+# Load specific sectors only
+tech_titles <- load_title_map(
+  file.path(dataset_dir, "titles/map"),
+  sector_filter = "technology|information"
+)
+
+# Load with features (slower)
+title_map <- load_title_map(
+  file.path(dataset_dir, "titles/map"),
+  add_features = TRUE
+)
+
+# With summaries
+res <- load_title_map(
+  file.path(dataset_dir, "titles/map"),
+  add_features = TRUE,
+  summarize = TRUE
+)
+}
+
 }

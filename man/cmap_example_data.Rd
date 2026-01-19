@@ -2,10 +2,25 @@
 % Please edit documentation in R/data.R
 \name{cmap_example_data}
 \alias{cmap_example_data}
-\title{Example data loader function for package test}
+\title{Get Path to Example Data}
 \usage{
-cmap_example_data()
+cmap_example_data(file = "example_transitions.csv")
+}
+\arguments{
+\item{file}{Character string specifying the example file name.
+Default is "example_transitions.csv".}
+}
+\value{
+Character string containing the full path to the example file,
+  or an empty string if the file does not exist.
 }
 \description{
-Example data loader function for package test
+Returns the path to example data files included with the cmapr package.
+}
+\examples{
+# Get path to example transitions data
+example_path <- cmap_example_data()
+if (nzchar(example_path)) {
+  head(readr::read_csv(example_path))
+}
 }

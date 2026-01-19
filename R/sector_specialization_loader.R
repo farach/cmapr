@@ -1,8 +1,3 @@
-utils::globalVariables(c(
-  "sector", "title", "frequency", "weighted_frequency", "se", "sd", "si", "onet_soc_codes",
-  "title_type", "title_length", "title_word_count"
-))
-
 #' Load and Augment Sector-Specific Title Specialization Data
 #'
 #' Reads all sector-specific CSV files from the `titles/si` folder and combines them into a single tidy dataframe.
@@ -22,8 +17,8 @@ utils::globalVariables(c(
 #' See accompanying paper for metric methodology.
 #' @examples
 #' si_data <- load_sector_specialization("~/cmap_data/dataset/titles/si", add_nlp = TRUE, summarize = TRUE)
-#' si_data$sector_stats %>% arrange(desc(mean_title_length))
-#' @importFrom purrr map_dfr
+#' si_data$sector_stats |> dplyr::arrange(dplyr::desc(mean_title_length))
+#' @importFrom purrr map list_rbind
 #' @importFrom readr read_csv
 #' @importFrom dplyr mutate filter select group_by summarise n_distinct count arrange n
 #' @importFrom janitor clean_names
@@ -37,19 +32,11 @@ load_sector_specialization <- function(
     summarize = FALSE,
     verbose = TRUE
 ) {
-  # Helper: Vectorized job title classifier
-  classify_title_type <- function(title) {
-    dplyr::case_when(
-      stringr::str_detect(title, stringr::regex("manager|director|lead|chief|head|executive", ignore_case = TRUE)) ~ "Managerial",
-      stringr::str_detect(title, stringr::regex("engineer|developer|analyst|scientist|technician", ignore_case = TRUE)) ~ "Technical",
-      stringr::str_detect(title, stringr::regex("assistant|junior|intern|trainee", ignore_case = TRUE)) ~ "Entry-level",
-      TRUE ~ "Other"
-    )
-  }
-  
+  # classify_title_type() is defined in utils.R
+
   summarize_sector_titles <- function(df) {
-    df %>%
-      dplyr::group_by(sector, title_type) %>%
+    df |>
+      dplyr::group_by(sector, title_type) |>
       dplyr::summarise(
         mean_title_length = mean(title_length, na.rm = TRUE),
         top_title = title[which.max(frequency)],
@@ -63,23 +50,23 @@ load_sector_specialization <- function(
   }
   
   csv_files <- list.files(si_dir, pattern = "\\.csv$", full.names = TRUE)
-  if (length(csv_files) == 0) stop("No CSV files found in ", si_dir)
-  
-  # Only use progress bar in interactive sessions
-  if (interactive()) pb <- cli::cli_progress_bar("Reading sector specialization files", total = length(csv_files))
-  
-  si_data <- purrr::map_dfr(csv_files, ~ {
-    if (interactive()) cli::cli_progress_update(pb)
+  if (length(csv_files) == 0) {
+    cli::cli_abort("No CSV files found in {.path {si_dir}}")
+  }
+
+  if (verbose && interactive()) {
+    cli::cli_alert_info("Reading {length(csv_files)} sector specialization files...")
+  }
+
+  si_data <- purrr::map(csv_files, \(.x) {
     df <- readr::read_csv(.x, show_col_types = FALSE)
     if (!"sector" %in% names(df)) {
-      sector_name <- basename(.x) |> sub("\\.csv$", "", .)
+      sector_name <- sub("\\.csv$", "", basename(.x))
       df <- dplyr::mutate(df, sector = sector_name)
     }
     df$source_file <- basename(.x)
     df
-  })
-  
-  if (interactive()) cli::cli_progress_done(pb)
+  }) |> purrr::list_rbind()
   
   si_data <- janitor::clean_names(si_data)
   
@@ -92,7 +79,7 @@ load_sector_specialization <- function(
   }
   
   if (add_nlp) {
-    si_data <- si_data %>%
+    si_data <- si_data |>
       dplyr::mutate(
         title_length = nchar(title),
         title_word_count = stringr::str_count(title, "\\w+"),

@@ -41,5 +41,5 @@ See accompanying paper for metric methodology.
 }
 \examples{
 si_data <- load_sector_specialization("~/cmap_data/dataset/titles/si", add_nlp = TRUE, summarize = TRUE)
-si_data$sector_stats \%>\% arrange(desc(mean_title_length))
+si_data$sector_stats |> dplyr::arrange(dplyr::desc(mean_title_length))
 }

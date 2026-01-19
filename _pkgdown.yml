@@ -10,7 +10,8 @@ navbar:
     right: [github]
 
 reference:
-  - title: "Main Functions"
+  - title: "Data Loading"
+    desc: "Functions to download and load CMap data"
     contents:
       - download_cmap_data
       - load_cmap_data
@@ -19,7 +20,37 @@ reference:
       - load_validated_promotions
       - load_unvalidated_promotions
       - cmap_example_data
+
+  - title: "Career Path Analysis"
+    desc: "Analyze promotion paths and career progressions"
+    contents:
+      - find_career_paths
+      - career_ladder
+
+  - title: "Network Analysis"
+    desc: "Convert data for graph/network analysis"
+    contents:
+      - as_igraph
+      - as_tidygraph
+      - network_summary
+
+  - title: "Data Summarization"
+    desc: "Summarize and analyze career transitions"
+    contents:
+      - summarize_transitions
+      - top_transitions
+      - promotion_rate
+      - sector_profile
+      - title_frequency
+
+  - title: "Utilities"
+    desc: "Helper functions"
+    contents:
       - find_csv_files
+      - read_csvs
+      - normalize_names
+      - validate_dir
+      - cmap_log
       - model_data
 
 articles:
