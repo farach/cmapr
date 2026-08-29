@@ -80,7 +80,10 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li>Fixed incorrect package name reference in <code><a href="../reference/cmap_example_data.html">cmap_example_data()</a></code> (was “cmaploader”, now “cmapr”)</li>
+<ul><li>
+<code><a href="../reference/load_sector_specialization.html">load_sector_specialization()</a></code> no longer fails when <code>summarize = TRUE</code> is combined with <code>add_nlp = FALSE</code>; sector summaries are now grouped by the columns that are actually present.</li>
+<li>Examples for <code><a href="../reference/load_sector_specialization.html">load_sector_specialization()</a></code>, <code><a href="../reference/load_unvalidated_promotions.html">load_unvalidated_promotions()</a></code>, and <code><a href="../reference/load_validated_promotions.html">load_validated_promotions()</a></code> no longer fail <code>R CMD check</code>, which previously errored because they referenced a local CMap dataset that is not available at check time.</li>
+<li>Fixed incorrect package name reference in <code><a href="../reference/cmap_example_data.html">cmap_example_data()</a></code> (was “cmaploader”, now “cmapr”)</li>
 <li>Resolved NAMESPACE merge conflicts</li>
 </ul></div>
 <div class="section level3">

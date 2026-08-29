@@ -48,24 +48,26 @@ dataset for column details and methodology.
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
+unvalidated_dir <- "~/cmap_data/dataset/promotions/unvalidated"
+
 # Load all unvalidated promotion edges (job movements)
-unvalidated_edges <- load_unvalidated_promotions("edges", "~/cmap_data/dataset/promotions/unvalidated")
-#> Error in load_unvalidated_promotions("edges", "~/cmap_data/dataset/promotions/unvalidated"): ✖ Target subfolder does not exist:
-#>   ~/cmap_data/dataset/promotions/unvalidated/edges
-#> ℹ Please check that the data directory is correct.
+unvalidated_edges <- load_unvalidated_promotions("edges", unvalidated_dir)
+
 # Load all unvalidated title nodes
-unvalidated_nodes <- load_unvalidated_promotions("nodes", "~/cmap_data/dataset/promotions/unvalidated")
-#> Error in load_unvalidated_promotions("nodes", "~/cmap_data/dataset/promotions/unvalidated"): ✖ Target subfolder does not exist:
-#>   ~/cmap_data/dataset/promotions/unvalidated/nodes
-#> ℹ Please check that the data directory is correct.
+unvalidated_nodes <- load_unvalidated_promotions("nodes", unvalidated_dir)
+
 # List available network HTML files
-unvalidated_networks <- load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated")
-#> Error in load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated"): ✖ Target subfolder does not exist:
-#>   ~/cmap_data/dataset/promotions/unvalidated/network
-#> ℹ Please check that the data directory is correct.
+unvalidated_networks <- load_unvalidated_promotions(
+  "network",
+  unvalidated_dir
+)
+
 # Open a specific sector-region network visualization
-load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated", open_html = "EUROPE_finance.html")
-#> Error in load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated",     open_html = "EUROPE_finance.html"): ✖ Target subfolder does not exist:
-#>   ~/cmap_data/dataset/promotions/unvalidated/network
-#> ℹ Please check that the data directory is correct.
+load_unvalidated_promotions(
+  "network",
+  unvalidated_dir,
+  open_html = "EUROPE_finance.html"
+)
+} # }
 ```

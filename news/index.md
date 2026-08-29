@@ -69,6 +69,17 @@
 
 ### Bug Fixes
 
+- [`load_sector_specialization()`](https://farach.github.io/cmapr/reference/load_sector_specialization.md)
+  no longer fails when `summarize = TRUE` is combined with
+  `add_nlp = FALSE`; sector summaries are now grouped by the columns
+  that are actually present.
+- Examples for
+  [`load_sector_specialization()`](https://farach.github.io/cmapr/reference/load_sector_specialization.md),
+  [`load_unvalidated_promotions()`](https://farach.github.io/cmapr/reference/load_unvalidated_promotions.md),
+  and
+  [`load_validated_promotions()`](https://farach.github.io/cmapr/reference/load_validated_promotions.md)
+  no longer fail `R CMD check`, which previously errored because they
+  referenced a local CMap dataset that is not available at check time.
 - Fixed incorrect package name reference in
   [`cmap_example_data()`](https://farach.github.io/cmapr/reference/cmap_example_data.md)
   (was “cmaploader”, now “cmapr”)

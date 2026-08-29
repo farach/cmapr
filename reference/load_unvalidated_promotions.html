@@ -80,26 +80,28 @@ See README in the dataset for column details and methodology.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load all unvalidated promotion edges (job movements)</span></span></span>
-<span class="r-in"><span><span class="va">unvalidated_edges</span> <span class="op">&lt;-</span> <span class="fu">load_unvalidated_promotions</span><span class="op">(</span><span class="st">"edges"</span>, <span class="st">"~/cmap_data/dataset/promotions/unvalidated"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in load_unvalidated_promotions("edges", "~/cmap_data/dataset/promotions/unvalidated"):</span> <span style="color: #BB0000;">✖</span> Target subfolder does not exist:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">~/cmap_data/dataset/promotions/unvalidated/edges</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please check that the data directory is correct.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">unvalidated_dir</span> <span class="op">&lt;-</span> <span class="st">"~/cmap_data/dataset/promotions/unvalidated"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load all unvalidated promotion edges (job movements)</span></span></span>
+<span class="r-in"><span><span class="va">unvalidated_edges</span> <span class="op">&lt;-</span> <span class="fu">load_unvalidated_promotions</span><span class="op">(</span><span class="st">"edges"</span>, <span class="va">unvalidated_dir</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Load all unvalidated title nodes</span></span></span>
-<span class="r-in"><span><span class="va">unvalidated_nodes</span> <span class="op">&lt;-</span> <span class="fu">load_unvalidated_promotions</span><span class="op">(</span><span class="st">"nodes"</span>, <span class="st">"~/cmap_data/dataset/promotions/unvalidated"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in load_unvalidated_promotions("nodes", "~/cmap_data/dataset/promotions/unvalidated"):</span> <span style="color: #BB0000;">✖</span> Target subfolder does not exist:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">~/cmap_data/dataset/promotions/unvalidated/nodes</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please check that the data directory is correct.</span>
+<span class="r-in"><span><span class="va">unvalidated_nodes</span> <span class="op">&lt;-</span> <span class="fu">load_unvalidated_promotions</span><span class="op">(</span><span class="st">"nodes"</span>, <span class="va">unvalidated_dir</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># List available network HTML files</span></span></span>
-<span class="r-in"><span><span class="va">unvalidated_networks</span> <span class="op">&lt;-</span> <span class="fu">load_unvalidated_promotions</span><span class="op">(</span><span class="st">"network"</span>, <span class="st">"~/cmap_data/dataset/promotions/unvalidated"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated"):</span> <span style="color: #BB0000;">✖</span> Target subfolder does not exist:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">~/cmap_data/dataset/promotions/unvalidated/network</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please check that the data directory is correct.</span>
+<span class="r-in"><span><span class="va">unvalidated_networks</span> <span class="op">&lt;-</span> <span class="fu">load_unvalidated_promotions</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"network"</span>,</span></span>
+<span class="r-in"><span>  <span class="va">unvalidated_dir</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Open a specific sector-region network visualization</span></span></span>
-<span class="r-in"><span><span class="fu">load_unvalidated_promotions</span><span class="op">(</span><span class="st">"network"</span>, <span class="st">"~/cmap_data/dataset/promotions/unvalidated"</span>, open_html <span class="op">=</span> <span class="st">"EUROPE_finance.html"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated",     open_html = "EUROPE_finance.html"):</span> <span style="color: #BB0000;">✖</span> Target subfolder does not exist:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">~/cmap_data/dataset/promotions/unvalidated/network</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please check that the data directory is correct.</span>
+<span class="r-in"><span><span class="fu">load_unvalidated_promotions</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"network"</span>,</span></span>
+<span class="r-in"><span>  <span class="va">unvalidated_dir</span>,</span></span>
+<span class="r-in"><span>  open_html <span class="op">=</span> <span class="st">"EUROPE_finance.html"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

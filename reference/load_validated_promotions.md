@@ -54,20 +54,23 @@ methodology.
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
+validated_dir <- "~/cmap_data/dataset/promotions/validated"
+
 # Load all validated promotion edges (job movements)
-validated_edges <- load_validated_promotions("edges", "~/cmap_data/dataset/promotions/validated")
-#> Error in validate_dir(data_dir, label = "data_dir"): ✖ Directory does not exist: ~/cmap_data/dataset/promotions/validated
-#> ℹ Please check that the data_dir is correct and the directory exists.
+validated_edges <- load_validated_promotions("edges", validated_dir)
+
 # Load all validated title nodes
-validated_nodes <- load_validated_promotions("nodes", "~/cmap_data/dataset/promotions/validated")
-#> Error in validate_dir(data_dir, label = "data_dir"): ✖ Directory does not exist: ~/cmap_data/dataset/promotions/validated
-#> ℹ Please check that the data_dir is correct and the directory exists.
+validated_nodes <- load_validated_promotions("nodes", validated_dir)
+
 # List available network HTML files
-validated_networks <- load_validated_promotions("network", "~/cmap_data/dataset/promotions/validated")
-#> Error in validate_dir(data_dir, label = "data_dir"): ✖ Directory does not exist: ~/cmap_data/dataset/promotions/validated
-#> ℹ Please check that the data_dir is correct and the directory exists.
+validated_networks <- load_validated_promotions("network", validated_dir)
+
 # Open a specific sector/country network visualization
-load_validated_promotions("network", "~/cmap_data/dataset/promotions/validated", open_html = "US_accounting_and_legal.html")
-#> Error in validate_dir(data_dir, label = "data_dir"): ✖ Directory does not exist: ~/cmap_data/dataset/promotions/validated
-#> ℹ Please check that the data_dir is correct and the directory exists.
+load_validated_promotions(
+  "network",
+  validated_dir,
+  open_html = "US_accounting_and_legal.html"
+)
+} # }
 ```
