@@ -14,21 +14,37 @@
 #' Network: Interactive HTML sector-region visualization files.
 #' See README in the dataset for column details and methodology.
 #' @examples
+#' \dontrun{
+#' unvalidated_dir <- "~/cmap_data/dataset/promotions/unvalidated"
+#'
 #' # Load all unvalidated promotion edges (job movements)
-#' unvalidated_edges <- load_unvalidated_promotions("edges", "~/cmap_data/dataset/promotions/unvalidated")
+#' unvalidated_edges <- load_unvalidated_promotions("edges", unvalidated_dir)
+#'
 #' # Load all unvalidated title nodes
-#' unvalidated_nodes <- load_unvalidated_promotions("nodes", "~/cmap_data/dataset/promotions/unvalidated")
+#' unvalidated_nodes <- load_unvalidated_promotions("nodes", unvalidated_dir)
+#'
 #' # List available network HTML files
-#' unvalidated_networks <- load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated")
+#' unvalidated_networks <- load_unvalidated_promotions(
+#'   "network",
+#'   unvalidated_dir
+#' )
+#'
 #' # Open a specific sector-region network visualization
-#' load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated", open_html = "EUROPE_finance.html")
+#' load_unvalidated_promotions(
+#'   "network",
+#'   unvalidated_dir,
+#'   open_html = "EUROPE_finance.html"
+#' )
+#' }
 #' @importFrom purrr map list_rbind
 #' @importFrom readr read_csv
 #' @importFrom utils browseURL
 #' @export
-load_unvalidated_promotions <- function(subfolder = c("edges", "nodes", "network"),
-                                        data_dir,
-                                        open_html = NULL) {
+load_unvalidated_promotions <- function(
+  subfolder = c("edges", "nodes", "network"),
+  data_dir,
+  open_html = NULL
+) {
   subfolder <- match.arg(subfolder)
   target_dir <- file.path(data_dir, subfolder)
 
@@ -41,14 +57,24 @@ load_unvalidated_promotions <- function(subfolder = c("edges", "nodes", "network
 
   if (subfolder %in% c("edges", "nodes")) {
     # Load all CSV files except system/hidden files
-    csv_files <- list.files(target_dir, pattern = "^[A-Z]+_.*\\.csv$", full.names = TRUE)
-    promotions_data <- purrr::map(csv_files, \(x) readr::read_csv(x, show_col_types = FALSE)) |>
+    csv_files <- list.files(
+      target_dir,
+      pattern = "^[A-Z]+_.*\\.csv$",
+      full.names = TRUE
+    )
+    promotions_data <- purrr::map(csv_files, \(x) {
+      readr::read_csv(x, show_col_types = FALSE)
+    }) |>
       purrr::list_rbind()
     return(dplyr::as_tibble(promotions_data))
   }
 
   if (subfolder == "network") {
-    html_files <- list.files(target_dir, pattern = "\\.html$", full.names = FALSE)
+    html_files <- list.files(
+      target_dir,
+      pattern = "\\.html$",
+      full.names = FALSE
+    )
     if (!is.null(open_html)) {
       html_path <- file.path(target_dir, open_html)
       if (!file.exists(html_path)) {

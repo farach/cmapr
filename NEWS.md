@@ -42,6 +42,8 @@
 
 ## Bug Fixes
 
+* `load_sector_specialization()` no longer fails when `summarize = TRUE` is combined with `add_nlp = FALSE`; sector summaries are now grouped by the columns that are actually present.
+* Examples for `load_sector_specialization()`, `load_unvalidated_promotions()`, and `load_validated_promotions()` no longer fail `R CMD check`, which previously errored because they referenced a local CMap dataset that is not available at check time.
 * Fixed incorrect package name reference in `cmap_example_data()` (was "cmaploader", now "cmapr")
 * Resolved NAMESPACE merge conflicts
 
