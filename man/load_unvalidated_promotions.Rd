@@ -32,12 +32,26 @@ Network: Interactive HTML sector-region visualization files.
 See README in the dataset for column details and methodology.
 }
 \examples{
+\dontrun{
+unvalidated_dir <- "~/cmap_data/dataset/promotions/unvalidated"
+
 # Load all unvalidated promotion edges (job movements)
-unvalidated_edges <- load_unvalidated_promotions("edges", "~/cmap_data/dataset/promotions/unvalidated")
+unvalidated_edges <- load_unvalidated_promotions("edges", unvalidated_dir)
+
 # Load all unvalidated title nodes
-unvalidated_nodes <- load_unvalidated_promotions("nodes", "~/cmap_data/dataset/promotions/unvalidated")
+unvalidated_nodes <- load_unvalidated_promotions("nodes", unvalidated_dir)
+
 # List available network HTML files
-unvalidated_networks <- load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated")
+unvalidated_networks <- load_unvalidated_promotions(
+  "network",
+  unvalidated_dir
+)
+
 # Open a specific sector-region network visualization
-load_unvalidated_promotions("network", "~/cmap_data/dataset/promotions/unvalidated", open_html = "EUROPE_finance.html")
+load_unvalidated_promotions(
+  "network",
+  unvalidated_dir,
+  open_html = "EUROPE_finance.html"
+)
+}
 }

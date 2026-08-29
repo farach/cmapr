@@ -27,19 +27,45 @@ load_sector_specialization(
 \item{verbose}{Logical, print progress/messages? Default: TRUE.}
 }
 \value{
-A tibble with added variables and clean output, or a list if summarize=TRUE.
+If `summarize = FALSE`, a tibble of specialization data. If
+  `summarize = TRUE`, a list with:
+\describe{
+  \item{si_data}{A tibble of the combined specialization data.}
+  \item{sector_stats}{A tibble of sector-level summary statistics.}
+}
 }
 \description{
-Reads all sector-specific CSV files from the `titles/si` folder and combines them into a single tidy dataframe.
-Adds NLP-derived features, sector-level summary statistics, and a progress bar for user feedback.
+Reads all sector-specific CSV files from the `titles/si` folder and combines
+them into a single tidy dataframe. Optionally adds NLP-derived features and
+sector-level summary statistics.
 }
 \details{
-Each file in `si_dir` must be named `<sector>.csv` and include columns:
-sector, title, frequency, weighted_frequency, SE, SD, SI, onet_soc_codes.
-The function now adds NLP-derived variables, sector-level summaries, and a progress bar.
+Each file in `si_dir` should be named `<sector>.csv` and include columns:
+title, frequency, weighted_frequency, SE, SD, SI, onet_soc_codes. If a
+`sector` column is not present, it is derived from the file name.
 See accompanying paper for metric methodology.
 }
 \examples{
-si_data <- load_sector_specialization("~/cmap_data/dataset/titles/si", add_nlp = TRUE, summarize = TRUE)
-si_data$sector_stats |> dplyr::arrange(dplyr::desc(mean_title_length))
+si_dir <- tempfile("cmapr-si-")
+dir.create(si_dir)
+specialization <- data.frame(
+  title = c("Software Engineer", "Engineering Manager"),
+  frequency = c(120, 40),
+  weighted_frequency = c(0.75, 0.25),
+  SE = c(0.02, 0.03),
+  SD = c(0.15, 0.20),
+  SI = c(0.86, 0.61),
+  onet_soc_codes = c("15-1252.00", "11-9041.00")
+)
+utils::write.csv(
+  specialization,
+  file.path(si_dir, "technology.csv"),
+  row.names = FALSE
+)
+
+si_result <- load_sector_specialization(si_dir, summarize = TRUE)
+si_result$sector_stats |>
+  dplyr::arrange(dplyr::desc(mean_title_length))
+
+unlink(si_dir, recursive = TRUE)
 }
