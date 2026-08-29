@@ -20,6 +20,7 @@ and structure
 provides all needed features
 
 ``` r
+
 \# Good - Modern native pipe
 
 data |> 
@@ -46,6 +47,7 @@ data %>%
 \- \*\*Support for inequality, rolling, and overlap joins\*\*
 
 ``` r
+
 \# Good - Modern join syntax
 
 transactions |> 
@@ -82,6 +84,7 @@ transactions |>
 \- \*\*Use `multiple` and `unmatched` arguments for quality control\*\*
 
 ``` r
+
 \# Expect 1:1 matches, error on multiple
 
 inner\_join(x, y, by = join\_by(id), multiple = "error")
@@ -109,6 +112,7 @@ selection\*\*
 \- \*\*Use `.data\[\[]]` for character vectors\*\*
 
 ``` r
+
 \# Data masking functions: arrange(), filter(), mutate(), summarise()
 
 \# Tidy selection functions: select(), relocate(), across()
@@ -158,6 +162,7 @@ functions\*\*
 \- \*\*Use `reframe()` for multi-row summaries\*\*
 
 ``` r
+
 \# Good - Per-operation grouping (always returns ungrouped)
 
 data |>
@@ -245,6 +250,7 @@ data and environment variables
 functions:\*\*
 
 ``` r
+
 \# Single argument forwarding
 
 my\_summarise <- function(data, var) {
@@ -267,6 +273,7 @@ mtcars |> my\_summarise(.data$cyl)  # pronoun syntax supported
 \#### Forwarding `...` (No Special Syntax Needed)
 
 ``` r
+
 \# Simple dots forwarding
 
 my\_group\_by <- function(.data, ...) {
@@ -301,6 +308,7 @@ my\_pivot\_longer <- function(.data, ...) {
 \*\*Use `.data` pronoun for programmatic column access:\*\*
 
 ``` r
+
 \# Single column by name
 
 my\_mean <- function(data, var) {
@@ -351,6 +359,7 @@ Operator \| Use Case \| Example \|
 \#### Advanced Injection with `!!`
 
 ``` r
+
 \# Create symbols from strings
 
 var <- "cyl"
@@ -377,6 +386,7 @@ mtcars |> dplyr::summarise(mean = mean(!!data\_sym(var)))
 \#### Splicing with `!!!`
 
 ``` r
+
 \# Multiple symbols from character vector
 
 vars <- c("cyl", "am")
@@ -403,6 +413,7 @@ mtcars |> dplyr::summarise(mean = mean(cyl, !!!args))
 \#### Using `list2()` for Dynamic Dots Support
 
 ``` r
+
 my\_function <- function(...) {
 
 &nbsp; # Collect with list2() instead of list() for dynamic features
@@ -429,6 +440,7 @@ my\_function(a = 1, )               # Trailing commas OK
 \#### Name Injection with Glue Syntax
 
 ``` r
+
 \# Basic name injection
 
 name <- "result"
@@ -473,6 +485,7 @@ mtcars |> my\_mean(cyl, name = "cylinder\_mean")
 \#### `.data` and `.env` Best Practices
 
 ``` r
+
 \# Explicit disambiguation prevents masking issues
 
 cyl <- 1000  # Environment variable
@@ -511,6 +524,7 @@ for (var in vars) {
 \*\*Converting between data-masking and tidy selection behaviors:\*\*
 
 ``` r
+
 \# across() as selection-to-data-mask bridge
 
 my\_group\_by <- function(data, vars) {
@@ -543,6 +557,7 @@ mtcars |> my\_group\_by(c("cyl", "am"))
 \#### Transformation Patterns
 
 ``` r
+
 \# Transform single arguments by wrapping
 
 my\_mean <- function(data, var) {
@@ -581,6 +596,7 @@ my\_means\_manual <- function(.data, ...) {
 \#### Don’t Use These Deprecated/Dangerous Patterns
 
 ``` r
+
 \# Avoid - String parsing and eval (security risk)
 
 var <- "cyl" 
@@ -615,6 +631,7 @@ mtcars |> summarise(mean(.data\[\[var]]))  # Even safer
 \#### Common Mistakes
 
 ``` r
+
 \# Don't use {{ }} on non-arguments
 
 my\_func <- function(x) {
@@ -651,6 +668,7 @@ my\_func <- function(data, var) {
 \#### Import Strategy
 
 ``` r
+
 \# In DESCRIPTION:
 
 Imports: rlang
@@ -671,6 +689,7 @@ importFrom(rlang, enquo, enquos, expr, !!!, :=)
 \#### Documentation Tags
 
 ``` r
+
 \#' @param var <\[`data-masked`]\[dplyr::dplyr\_data\_masking]> Column to summarize
 
 \#' @param ... <\[`dynamic-dots`]\[rlang::dyn-dots]> Additional grouping variables  
@@ -681,6 +700,7 @@ importFrom(rlang, enquo, enquos, expr, !!!, :=)
 \#### Testing rlang Functions
 
 ``` r
+
 \# Test data-masking behavior
 
 test\_that("function supports data masking", {
@@ -745,6 +765,7 @@ environments \| When profvis available \| Raw profiling data \|
 \#### Step-by-Step Performance Workflow
 
 ``` r
+
 \# 1. Profile first - find the actual bottlenecks
 
 library(profvis)
@@ -787,6 +808,7 @@ bench::mark(
 \*\*Parallel Processing (`in\_parallel()`)\*\*
 
 ``` r
+
 \# Helps when:
 
 ✓ CPU-intensive computations
@@ -833,6 +855,7 @@ map(1:100, in\_parallel(fast\_func))       # 100μs -> 50ms (500x slower!)
 \*\*vctrs Backend Tools\*\*
 
 ``` r
+
 \# Use vctrs when:
 
 ✓ Type safety matters more than raw speed
@@ -869,6 +892,7 @@ robust\_combine <- function(x, y) vec\_c(x, y)      # Safer, slight overhead
 \*\*Data Backend Selection\*\*
 
 ``` r
+
 \# Use data.table when:
 
 ✓ Very large datasets (>1GB)
@@ -905,6 +929,7 @@ robust\_combine <- function(x, y) vec\_c(x, y)      # Safer, slight overhead
 \### Profiling Best Practices
 
 ``` r
+
 \# 1. Profile realistic data sizes
 
 profvis({
@@ -955,6 +980,7 @@ bench::mark(
 \### Performance Anti-Patterns to Avoid
 
 ``` r
+
 \# Don't optimize without measuring
 
 \# ✗ "This looks slow" -> immediately rewrite
@@ -995,6 +1021,7 @@ bench::mark(
 \- \*\*Profile to identify true bottlenecks\*\*
 
 ``` r
+
 \# For packages - consider backend tools
 
 \# vctrs for type-stable vector operations
@@ -1023,6 +1050,7 @@ everywhere
 \#### Building Custom Vector Classes
 
 ``` r
+
 \# Good - vctrs-based vector class
 
 new\_percent <- function(x = double()) {
@@ -1041,6 +1069,7 @@ new\_percent <- function(x = double()) {
 \#### Type-Stable Functions in Packages
 
 ``` r
+
 \# Good - Guaranteed output type
 
 my\_function <- function(x, y) {
@@ -1061,6 +1090,7 @@ sapply(x, function(i) if(condition) 1L else 1.0)
 \#### Consistent Coercion/Casting
 
 ``` r
+
 \# Good - Explicit casting with clear rules
 
 vec\_cast(x, double())  # Clear intent, predictable behavior
@@ -1081,6 +1111,7 @@ c(factor("a"), "b")  # Unpredictable behavior
 \#### Size/Length Stability
 
 ``` r
+
 \# Good - Predictable sizing
 
 vec\_c(x, y)  # size = vec\_size(x) + vec\_size(y)
@@ -1120,6 +1151,7 @@ Size operations \| [`length()`](https://rdrr.io/r/base/length.html) \|
 \#### Basic Vector Class
 
 ``` r
+
 \# Constructor (low-level)
 
 new\_percent <- function(x = double()) {
@@ -1156,6 +1188,7 @@ format.pkg\_percent <- function(x, ...) {
 \#### Coercion Methods
 
 ``` r
+
 \# Self-coercion
 
 vec\_ptype2.pkg\_percent.pkg\_percent <- function(x, y, ...) {
@@ -1216,6 +1249,7 @@ re-computation
 \#### Exports and Dependencies
 
 ``` r
+
 \# DESCRIPTION - Import specific functions
 
 Imports: vctrs
@@ -1236,6 +1270,7 @@ import(vctrs)
 \#### Testing vctrs Classes
 
 ``` r
+
 \# Test type stability
 
 test\_that("my\_function is type stable", {
@@ -1284,6 +1319,7 @@ for simple operations.\*\*
 \- \*\*Use `in\_parallel()` for scaling\*\* across cores
 
 ``` r
+
 \# Modern data frame row binding (purrr 1.0+)
 
 models <- data\_splits |> 
@@ -1338,6 +1374,7 @@ daemons(0)
 \- \*\*Pipe-friendly and vectorized by design\*\*
 
 ``` r
+
 \# Good - stringr (consistent, pipe-friendly)
 
 text |>
@@ -1412,6 +1449,7 @@ gsub("a", "b", text)           # different arg order
 \### Vectorization and Performance
 
 ``` r
+
 \# Good - vectorized operations
 
 result <- x + y
@@ -1448,6 +1486,7 @@ for(i in seq\_along(x)) {
 \### Structure and Style
 
 ``` r
+
 \# Good function structure
 
 rescale01 <- function(x) {
@@ -1472,6 +1511,7 @@ map\_lgl()   # returns logical vector
 \### Naming and Arguments
 
 ``` r
+
 \# Good naming: snake\_case for variables/functions
 
 calculate\_mean\_score <- function(data, score\_col) {
@@ -1502,6 +1542,7 @@ my\_function <- function(.data, ...) {
 \- \*\*Avoid dots except for S3 methods\*\*
 
 ``` r
+
 \# Good
 
 day\_one
@@ -1524,6 +1565,7 @@ userData
 \### Spacing and Layout
 
 ``` r
+
 \# Good spacing
 
 x\[, 1]
@@ -1560,6 +1602,7 @@ data |>
 \### Legacy Patterns
 
 ``` r
+
 \# Avoid - Old pipe
 
 data %>% function()
@@ -1588,6 +1631,7 @@ mutate(data, !!paste0("new\_", var) := value)
 \### Performance Anti-Patterns
 
 ``` r
+
 \# Avoid - Growing objects in loops
 
 result <- c()
@@ -1628,6 +1672,7 @@ result <- map(1:n, compute)
 \- \*\*Compatible with existing S3 code\*\*
 
 ``` r
+
 \# S7 class definition
 
 Range <- new\_class("Range",
@@ -1684,6 +1729,7 @@ method(inside, Range) <- function(x, y) {
 \#### 1. \*\*Vector-like objects\*\* (things that behave like atomic
 vectors)
 
+
     Use vctrs when:
 
     ✓ Need data frame integration (columns/rows)
@@ -1702,6 +1748,7 @@ vectors)
 
 \#### 2. \*\*General objects\*\* (complex data structures, not
 vector-like)
+
 
     Use S7 when:
 
@@ -1781,6 +1828,7 @@ new patterns \|
 \#### Choose S7 when you have:
 
 ``` r
+
 \# Complex validation needs
 
 Range <- new\_class("Range",
@@ -1811,6 +1859,7 @@ Child <- new\_class("Child", parent = Parent)
 \#### Choose vctrs when you need:
 
 ``` r
+
 \# Vector-like behavior in data frames
 
 percent <- new\_vctr(0.5, class = "percentage") 
@@ -1829,6 +1878,7 @@ vec\_cast(0.5, percent())          # explicit, safe casting
 \#### Choose S3 when you have:
 
 ``` r
+
 \# Simple classes without complex needs
 
 new\_simple <- function(x) structure(x, class = "simple")
@@ -1862,6 +1912,7 @@ internally
 \#### When to Add Dependencies vs Base R
 
 ``` r
+
 \# Add dependency when:
 
 ✓ Significant functionality gain
@@ -1900,6 +1951,7 @@ x + 1                      # Don't need dplyr for this
 \#### Tidyverse Dependency Guidelines
 
 ``` r
+
 \# Core tidyverse (usually worth it):
 
 dplyr     # Complex data manipulation
@@ -1936,6 +1988,7 @@ shiny     # Only for interactive apps
 \#### Function Design Strategy
 
 ``` r
+
 \# Modern tidyverse API patterns
 
 
@@ -1982,6 +2035,7 @@ my\_function <- function(.data) {
 \#### Input Validation Strategy
 
 ``` r
+
 \# Validation level by function type:
 
 
@@ -2036,6 +2090,7 @@ safe\_function <- function(x, y) {
 \### Error Handling Patterns
 
 ``` r
+
 \# Good error messages - specific and actionable
 
 if (length(x) == 0) {
@@ -2078,6 +2133,7 @@ validate\_input <- function(x, call = caller\_env()) {
 \#### Export Function When:
 
 ``` r
+
 ✓ Users will call it directly
 
 ✓ Other packages might want to extend it
@@ -2104,6 +2160,7 @@ export\_these <- function(.data, ...) {
 \#### Keep Function Internal When:
 
 ``` r
+
 ✓ Implementation detail that may change
 
 ✓ Only used within package
@@ -2132,6 +2189,7 @@ export\_these <- function(.data, ...) {
 \#### Testing Levels
 
 ``` r
+
 \# Unit tests - individual functions
 
 test\_that("function handles edge cases", {
@@ -2174,6 +2232,7 @@ test\_that("function properties hold", {
 \#### Documentation Priorities
 
 ``` r
+
 \# Must document:
 
 ✓ All exported functions
@@ -2200,6 +2259,7 @@ test\_that("function properties hold", {
 \### From Base R to Modern Tidyverse
 
 ``` r
+
 \# Data manipulation
 
 subset(data, condition)          -> filter(data, condition)
@@ -2238,6 +2298,7 @@ tolower(text)                   -> str\_to\_lower(text)
 \### From Old to New Tidyverse Patterns
 
 ``` r
+
 \# Pipes
 
 data %>% function()             -> data |> function()
@@ -2288,6 +2349,7 @@ extract(col, into = "x", regex)   -> separate\_wider\_regex(col, patterns = c(x 
 \### Performance Migrations
 
 ``` r
+
 \# Old -> New performance patterns
 
 for loops for parallelizable work -> map(data, in\_parallel(f))

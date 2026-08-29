@@ -40,5 +40,6 @@ The full dataset must be downloaded first with
 [`download_cmap_data()`](https://farach.github.io/cmapr/reference/download_cmap_data.md).
 Example:
 
+
       dataset_dir <- download_cmap_data("~/cmap_data")
       result <- load_cmap_data(base_path = dataset_dir)

@@ -25,6 +25,7 @@ using the tidyverse ecosystem.
 Install from GitHub using `remotes`:
 
 ``` r
+
 install.packages("remotes")
 remotes::install_github("farach/cmapr")
 ```
@@ -42,6 +43,7 @@ download it once. For example, use `"~/cmap_data"` (your home
 directory), or a project-specific path.
 
 ``` r
+
 library(cmapr)
 dataset_dir <- download_cmap_data("~/cmap_data")
 ```
@@ -53,6 +55,7 @@ dataset_dir <- download_cmap_data("~/cmap_data")
 - To **force overwrite/download**, set `overwrite = TRUE`:
 
 ``` r
+
 dataset_dir <- download_cmap_data("~/cmap_data", overwrite = TRUE)
 ```
 
@@ -76,6 +79,7 @@ dataset_dir <- download_cmap_data("~/cmap_data", overwrite = TRUE)
 After downloading, load the data into tidy tibbles for analysis:
 
 ``` r
+
 result <- load_cmap_data(base_path = dataset_dir)
 model_data <- result$model_data      # Main transitions and features
 metadata   <- result$metadata        # Job title and sector metadata
@@ -90,6 +94,7 @@ The loader functions support additional options for performance and
 customization:
 
 ``` r
+
 # Load title maps with custom options
 title_map <- load_title_map(
   file.path(dataset_dir, "titles/map"),
@@ -110,6 +115,7 @@ validated_edges <- load_validated_promotions(
 Use the built-in summarizer functions to quickly analyze the data:
 
 ``` r
+
 # Summarize transitions by sector
 sector_summary <- summarize_transitions(model_data, by = "sector")
 

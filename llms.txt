@@ -65,6 +65,7 @@ and mobility modeling.
 Install the latest development version from GitHub:
 
 ``` r
+
 install.packages("remotes")  # if needed
 remotes::install_github("farach/cmapr")
 ```
@@ -78,6 +79,7 @@ and licensing. To download and prepare the data (requires ~130MB disk
 space):
 
 ``` r
+
 library(cmapr)
 
 # Download and unzip dataset from Zenodo (to a permanent location recommended)
@@ -97,6 +99,7 @@ Notes:
 ### 1. Load Core Data
 
 ``` r
+
 library(cmapr)
 library(dplyr)
 
@@ -108,6 +111,7 @@ metadata <- result$metadata
 ### 2. Explore Job Title Specialization
 
 ``` r
+
 si_data <- load_sector_specialization(file.path(dataset_dir, "titles/si"))
 
 # Top specialized titles per sector
@@ -120,6 +124,7 @@ si_data |>
 ### 3. Job Title Mapping Pipeline
 
 ``` r
+
 # Fast load (default) - uses vroom, skips derived features
 title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
 
@@ -145,6 +150,7 @@ title_map |>
 #### Validated (human-annotated)
 
 ``` r
+
 # Load with readr (default)
 validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"))
 
@@ -164,6 +170,7 @@ load_validated_promotions("network", file.path(dataset_dir, "promotions/validate
 #### Unvalidated (model-inferred)
 
 ``` r
+
 unvalidated_edges <- load_unvalidated_promotions("edges", file.path(dataset_dir, "promotions/unvalidated"))
 
 unvalidated_nodes <- load_unvalidated_promotions("nodes", file.path(dataset_dir, "promotions/unvalidated"))
@@ -175,6 +182,7 @@ load_unvalidated_promotions("network", file.path(dataset_dir, "promotions/unvali
 ### 5. Data Summarization & Analysis
 
 ``` r
+
 # Summarize transitions by sector and region (using model_data)
 summary <- summarize_transitions(model_data, by = c("sector", "region"))
 
@@ -195,6 +203,7 @@ title_freq <- title_frequency(title_map, by = "sector", n = 20)
 ### 6. Career Path Analysis
 
 ``` r
+
 # Find all paths from "analyst" to "director"
 paths <- find_career_paths(
   validated_edges,
@@ -217,6 +226,7 @@ print(ladder$ladder)
 ### 7. Network Analysis with igraph/tidygraph
 
 ``` r
+
 # Convert to igraph for network analysis
 library(igraph)
 g <- as_igraph(validated_edges, sector = "Accounting & Legal")

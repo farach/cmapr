@@ -18,6 +18,7 @@ The specialization index (SI) quantifies how distinctive a job title is
 within its sector.
 
 ``` r
+
 si_data <- load_sector_specialization(file.path(dataset_dir, "titles/si"))
 si_data |>
   group_by(sector) |>
@@ -31,6 +32,7 @@ To find the most specialized roles in a sector, filter by high SI
 scores.
 
 ``` r
+
 si_data |>
   filter(sector == "Information Technology") |>
   arrange(desc(si)) |>
@@ -45,6 +47,7 @@ The title mapping data helps you understand how raw job titles are
 standardized and grouped.
 
 ``` r
+
 title_map <- load_title_map(file.path(dataset_dir, "titles/map"))
 
 # View available columns
@@ -60,6 +63,7 @@ Use this mapping to collapse variant job titles and compute sector-level
 frequencies.
 
 ``` r
+
 title_map |>
   group_by(sector, title_cleaned) |>
   summarise(total = sum(frequency_cleaned, na.rm = TRUE), .groups = "drop") |>
@@ -76,6 +80,7 @@ validated (manually reviewed) and unvalidated (algorithmic).
 #### **Validated Promotions**
 
 ``` r
+
 validated_edges <- load_validated_promotions("edges", file.path(dataset_dir, "promotions/validated"))
 validated_nodes <- load_validated_promotions("nodes", file.path(dataset_dir, "promotions/validated"))
 ```
@@ -83,6 +88,7 @@ validated_nodes <- load_validated_promotions("nodes", file.path(dataset_dir, "pr
 #### **Unvalidated Promotions**
 
 ``` r
+
 unvalidated_edges <- load_unvalidated_promotions("edges", file.path(dataset_dir, "promotions/unvalidated"))
 unvalidated_nodes <- load_unvalidated_promotions("nodes", file.path(dataset_dir, "promotions/unvalidated"))
 ```
@@ -91,6 +97,7 @@ unvalidated_nodes <- load_unvalidated_promotions("nodes", file.path(dataset_dir,
 Investigate the most frequent promotion paths in a sector:
 
 ``` r
+
 unvalidated_edges |>
   filter(sector == "Healthcare") |>
   arrange(desc(frequency)) |>
@@ -106,12 +113,14 @@ You can visualize promotion networks interactively (if HTML files are
 available):
 
 ``` r
+
 load_validated_promotions("network", file.path(dataset_dir, "promotions/validated"), open_html = "US_finance.html")
 ```
 
 Or plot a simple summary using ggplot2:
 
 ``` r
+
 top_edges <- unvalidated_edges |>
   group_by(sector) |>
   arrange(desc(frequency)) |>
